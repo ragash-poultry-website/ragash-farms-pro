@@ -6,7 +6,7 @@
   <meta name="description" content="Book premium poultry from Ragash Farms – live birds, frozen birds, eggs. Local pickup in Edo State.">
   <title>Book Now | Ragash Farms</title>
   <style>
-    /* ====== SAME PROFESSIONAL STYLES ====== */
+    /* ====== PROFESSIONAL STYLES ====== */
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Montserrat:wght@400;500;600;700&display=swap');
     :root {
       --primary: #2E5939;
@@ -353,7 +353,8 @@
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
   <script type="text/javascript">
     (function() {
-      emailjs.init("template_sdpobbf"); // ← Replace with your EmailJS Public Key
+      // ✅ YOUR PUBLIC KEY INSERTED HERE
+      emailjs.init("aIXXXTDh-_3JOPMWT");
     })();
   </script>
 
@@ -421,11 +422,11 @@
         step1.classList.add('active');
       });
 
-      // Confirm & Submit via EmailJS
+      // ✅ CONFIRMED: Using your Service ID and Template ID
       confirmBtn.addEventListener('click', () => {
         const data = JSON.parse(localStorage.getItem('ragashOrder'));
 
-        emailjs.send("ragash_service", "ragash_template", data)
+        emailjs.send("service_kd50apj", "template_sdpobbf", data)
           .then(() => {
             step2.classList.remove('active');
             step3.classList.add('active');
@@ -433,7 +434,8 @@
             const waMessage = `Hello Ragash Farms,\n\nI just booked:\nProduct: ${data.product}\nQuantity: ${data.quantity}\nPickup Date: ${data.pickupDate}\n\nPlease confirm.`;
             whatsappConfirm.href = `https://wa.me/2348138570933?text=${encodeURIComponent(waMessage)}`;
           })
-          .catch(() => {
+          .catch((error) => {
+            console.error('EmailJS Error:', error);
             alert('❌ Failed to submit. Please try again or contact us on WhatsApp.');
           });
       });
