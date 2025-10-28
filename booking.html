@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="Book poultry products from Ragash Farms – chicks, eggs, birds. Local pickup in Edo State.">
+  <title>Book Now | Ragash Farms</title>
+  <link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="logo">Ragash<span>Farms</span></a>
+      <ul class="nav-menu">
+        <li><a href="about.html">About</a></li>
+        <li><a href="products.html">Products</a></li>
+        <li><a href="booking.html">Book Now</a></li>
+        <li><a href="gallery.html">Gallery</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="booking-card">
+    <div class="step-indicator">
+      <div class="step-dot active"></div>
+      <div class="step-dot"></div>
+      <div class="step-dot"></div>
+    </div>
+
+    <div class="form-step active" id="step1">
+      <h2 style="text-align:center; color:var(--primary); margin-bottom:1.5rem;">Book Your Order</h2>
+      <form id="bookingForm">
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" id="name" class="form-control" placeholder="e.g., John Doe" required>
+        </div>
+        <div class="form-group">
+          <label>Phone Number</label>
+          <input type="tel" id="phone" class="form-control" value="+234 813 857 0933" required>
+        </div>
+        <div class="form-group">
+          <label>Product</label>
+          <select id="product" class="form-control" required>
+            <option value="">-- Select Product --</option>
+            <option value="Live Birds">Live Birds (₦6,000 – ₦30,000)</option>
+            <option value="Frozen Birds">Frozen Birds (₦6,000/kg, min 2kg)</option>
+            <option value="Processed Chicken">Processed Chicken (₦5,000/kg, min 2kg)</option>
+            <option value="Organic Eggs">Organic Eggs (₦800–₦1,000/crate, max 5/day)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Quantity</label>
+          <input type="number" id="quantity" class="form-control" min="1" required>
+        </div>
+        <div class="form-group">
+          <label>Preferred Pickup Date</label>
+          <input type="date" id="pickupDate" class="form-control" required>
+        </div>
+        <div class="pickup-info">
+          <strong>📍 Pickup Instructions:</strong><br>
+          Come to the main gate of Ragash Farms, Igbiracamp. Call us on arrival.<br>
+          Bring your own crates/coolers for live birds or frozen items.
+        </div>
+        <button type="submit" class="btn">✅ Send Booking Request</button>
+      </form>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="copyright">
+      &copy; 2025 Ragash Farms. All rights reserved.
+    </div>
+  </footer>
+
+  <a href="https://wa.me/2348138570933" class="whatsapp-btn" target="_blank">💬</a>
+
+  <script>
+    window.addEventListener('scroll', () => {
+      const navbar = document.getElementById('navbar');
+      if (window.scrollY > 50) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
+    });
+
+    document.getElementById('pickupDate').addEventListener('input', function() {
+      if (new Date(this.value).getDay() === 0) {
+        alert("We're closed on Sundays.");
+        this.value = '';
+      }
+    });
+
+    document.getElementById('bookingForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const name = document.getElementById('name').value;
+      const phone = document.getElementById('phone').value;
+      const product = document.getElementById('product').value;
+      const quantity = document.getElementById('quantity').value;
+      const pickup = document.getElementById('pickupDate').value;
+
+      const subject = `New Booking: ${product}`;
+      const body = `Name: ${name}\nPhone: ${phone}\nProduct: ${product}\nQuantity: ${quantity}\nPickup Date: ${pickup}\n\n-- Sent from Ragash Farms Website`;
+
+      window.location.href = `mailto:ragashfarms@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    });
+  </script>
+</body>
+</html>
