@@ -6,7 +6,7 @@
   <meta name="description" content="Book poultry products from Ragash Farms – chicks, eggs, birds. Local pickup in Edo State.">
   <title>Book Now | Ragash Farms</title>
   <style>
-    /* ====== SAME CSS AS index.html + FORM STYLES ====== */
+    /* ====== MOBILE-FRIENDLY STYLES (INLINE) ====== */
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Montserrat:wght@400;500;600;700&display=swap');
     :root {
       --primary: #2E5939;
@@ -126,6 +126,10 @@
     }
     .form-step {
       padding: 2.5rem;
+      display: none;
+    }
+    .form-step.active {
+      display: block;
     }
     .form-group {
       margin-bottom: 1.5rem;
@@ -171,24 +175,12 @@
       transition: all 0.4s ease;
       box-shadow: 0 4px 20px rgba(211, 84, 0, 0.3);
       width: 100%;
+      margin-top: 0.5rem;
     }
     .btn:hover {
       background: #b04a00;
       transform: translateY(-4px);
       box-shadow: 0 8px 25px rgba(211, 84, 0, 0.5);
-    }
-    .footer {
-      background: var(--dark);
-      color: white;
-      padding: 4rem 2rem 2rem;
-      text-align: center;
-    }
-    .copyright {
-      padding-top: 2rem;
-      margin-top: 2rem;
-      border-top: 1px solid #34495e;
-      color: #95a5a6;
-      font-size: 1rem;
     }
     .whatsapp-btn {
       position: fixed;
@@ -211,6 +203,27 @@
     .whatsapp-btn:hover {
       transform: scale(1.1);
       box-shadow: 0 8px 25px rgba(37, 211, 102, 0.6);
+    }
+    .success-message {
+      text-align: center;
+      padding: 2rem;
+    }
+    .success-message h3 {
+      color: var(--secondary);
+      margin-bottom: 1rem;
+    }
+    .footer {
+      background: var(--dark);
+      color: white;
+      padding: 4rem 2rem 2rem;
+      text-align: center;
+    }
+    .copyright {
+      padding-top: 2rem;
+      margin-top: 2rem;
+      border-top: 1px solid #34495e;
+      color: #95a5a6;
+      font-size: 1rem;
     }
     @media (max-width: 768px) {
       .menu-toggle { display: block; }
@@ -272,7 +285,8 @@
   </section>
 
   <div class="booking-card">
-    <div class="form-step">
+    <!-- Step 1: Form -->
+    <div class="form-step active" id="step1">
       <form id="bookingForm">
         <div class="form-group">
           <label>Full Name</label>
@@ -303,10 +317,27 @@
         <div class="pickup-info">
           <strong>📍 Pickup Instructions:</strong><br>
           Come to the main gate of Ragash Farms, Edo State. Call us on arrival.<br>
-          Bring your own crates/coolers for live birds or frozen items.
+          Bring your own crates/coolers.
         </div>
-        <button type="submit" class="btn">✅ Send Booking Request</button>
+        <button type="button" id="reviewBtn" class="btn">Review Order</button>
       </form>
+    </div>
+
+    <!-- Step 2: Review -->
+    <div class="form-step" id="step2">
+      <h3 style="text-align:center; color:var(--primary); margin-bottom:1.5rem;">Review Your Order</h3>
+      <div id="reviewContent" style="background:#f9f9f9; padding:1.5rem; border-radius:12px; margin-bottom:1.5rem;"></div>
+      <button type="button" id="backBtn" class="btn" style="background:#6c757d;">← Back</button>
+      <button type="button" id="confirmBtn" class="btn" style="margin-top:0.5rem;">✅ Confirm & Send</button>
+    </div>
+
+    <!-- Step 3: Success -->
+    <div class="form-step" id="step3">
+      <div class="success-message">
+        <h3>✅ Order Sent!</h3>
+        <p style="margin-bottom:1.5rem;">We’ll get back to you soon.</p>
+        <a href="https://wa.me/2348138570933?text=Hello%20Ragash%20Farms%2C%20I%20just%20placed%20an%20order%20on%20your%20website.%20Please%20confirm." class="btn" style="background:#25D366;">Chat on WhatsApp</a>
+      </div>
     </div>
   </div>
 
@@ -320,6 +351,7 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
+      // Mobile menu toggle
       const toggle = document.getElementById('menuToggle');
       const menu = document.getElementById('navMenu');
       if (toggle && menu) {
@@ -334,6 +366,17 @@
         });
       }
 
+      // Form elements
+      const form = document.getElementById('bookingForm');
+      const step1 = document.getElementById('step1');
+      const step2 = document.getElementById('step2');
+      const step3 = document.getElementById('step3');
+      const reviewContent = document.getElementById('reviewContent');
+      const reviewBtn = document.getElementById('reviewBtn');
+      const backBtn = document.getElementById('backBtn');
+      const confirmBtn = document.getElementById('confirmBtn');
+
+      // Prevent Sunday bookings
       document.getElementById('pickupDate').addEventListener('input', function() {
         if (new Date(this.value).getDay() === 0) {
           alert("We're closed on Sundays.");
@@ -341,18 +384,59 @@
         }
       });
 
-      document.getElementById('bookingForm').addEventListener('submit', function(e) {
-        e.preventDefault();
+      // Review button
+      reviewBtn.addEventListener('click', () => {
         const name = document.getElementById('name').value;
         const phone = document.getElementById('phone').value;
         const product = document.getElementById('product').value;
         const quantity = document.getElementById('quantity').value;
-        const pickup = document.getElementById('pickupDate').value;
+        const pickupDate = document.getElementById('pickupDate').value;
 
-        const subject = `New Booking: ${product}`;
-        const body = `Name: ${name}\nPhone: ${phone}\nProduct: ${product}\nQuantity: ${quantity}\nPickup Date: ${pickup}\n\n-- Sent from Ragash Farms Website`;
+        if (!name || !phone || !product || !quantity || !pickupDate) {
+          alert('Please fill all fields.');
+          return;
+        }
 
+        // Save to localStorage for WhatsApp later
+        const order = { name, phone, product, quantity, pickupDate };
+        localStorage.setItem('ragashOrder', JSON.stringify(order));
+
+        // Show review
+        reviewContent.innerHTML = `
+          <p><strong>Name:</strong> ${name}</p>
+          <p><strong>Phone:</strong> ${phone}</p>
+          <p><strong>Product:</strong> ${product}</p>
+          <p><strong>Quantity:</strong> ${quantity}</p>
+          <p><strong>Pickup Date:</strong> ${pickupDate}</p>
+        `;
+
+        step1.classList.remove('active');
+        step2.classList.add('active');
+      });
+
+      // Back button
+      backBtn.addEventListener('click', () => {
+        step2.classList.remove('active');
+        step1.classList.add('active');
+      });
+
+      // Confirm & Send
+      confirmBtn.addEventListener('click', () => {
+        const order = JSON.parse(localStorage.getItem('ragashOrder'));
+
+        // Send to Gmail
+        const subject = `New Booking: ${order.product}`;
+        const body = `Name: ${order.name}\nPhone: ${order.phone}\nProduct: ${order.product}\nQuantity: ${order.quantity}\nPickup Date: ${order.pickupDate}\n\n-- Sent from Ragash Farms Website`;
         window.location.href = `mailto:ragashfarms@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+        // Show success
+        step2.classList.remove('active');
+        step3.classList.add('active');
+
+        // Update WhatsApp button with order
+        const waMessage = `Hello, I just booked:\nProduct: ${order.product}\nQuantity: ${order.quantity}\nPickup: ${order.pickupDate}`;
+        const waLink = `https://wa.me/2348138570933?text=${encodeURIComponent(waMessage)}`;
+        document.querySelector('.success-message a').href = waLink;
       });
     });
   </script>
