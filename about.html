@@ -6,7 +6,7 @@
   <meta name="description" content="Learn about Ragash Farms – a trusted poultry farm in Edo State, Nigeria.">
   <title>About Us | Ragash Farms</title>
   <style>
-    /* ====== SAME CSS AS index.html ====== */
+    /* ====== PROFESSIONAL STYLES ====== */
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Montserrat:wght@400;500;600;700&display=swap');
     :root {
       --primary: #2E5939;
@@ -23,14 +23,18 @@
       color: var(--dark);
       line-height: 1.7;
       overflow-x: hidden;
+      background: url('assets/images/chicks-full.jpg') no-repeat center center/cover;
+      background-attachment: fixed;
+      color: white; /* White font for contrast */
     }
     h1, h2, h3, h4, h5 {
       font-family: 'Playfair Display', serif;
       font-weight: 700;
       line-height: 1.2;
+      color: white; /* White font for contrast */
     }
     .navbar {
-      background: rgba(255, 255, 255, 0.95);
+      background: rgba(255, 255, 255, 0.95); /* Light navbar, no dark overlay */
       backdrop-filter: blur(10px);
       box-shadow: 0 2px 20px rgba(0,0,0,0.08);
       position: fixed;
@@ -102,7 +106,7 @@
       text-align: center;
       position: relative;
       overflow: hidden;
-      background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.6)), #e0e0e0 no-repeat center center/cover;
+      background: transparent; /* No dark overlay here */
     }
     .hero-content {
       position: relative;
@@ -215,16 +219,13 @@
   <nav class="navbar" id="navbar">
     <div class="nav-container">
       <a href="index.html" class="logo">Ragash<span>Farms</span></a>
-      <div class="nav-menu-wrapper">
-        <button class="menu-toggle" id="menuToggle">☰</button>
-        <ul class="nav-menu" id="navMenu">
-          <li><a href="about.html">About</a></li>
-          <li><a href="products.html">Products</a></li>
-          <li><a href="booking.html">Book Now</a></li>
-          <li><a href="gallery.html">Gallery</a></li>
-          <li><a href="contact.html">Contact</a></li>
-        </ul>
-      </div>
+      <ul class="nav-menu">
+        <li><a href="about.html">About</a></li>
+        <li><a href="products.html">Products</a></li>
+        <li><a href="booking.html">Book Now</a></li>
+        <li><a href="gallery.html">Gallery</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
     </div>
   </nav>
 
@@ -255,23 +256,5 @@
   </footer>
 
   <a href="https://wa.me/2348138570933" class="whatsapp-btn" target="_blank">💬</a>
-
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const toggle = document.getElementById('menuToggle');
-      const menu = document.getElementById('navMenu');
-      if (toggle && menu) {
-        toggle.addEventListener('click', (e) => {
-          e.stopPropagation();
-          menu.classList.toggle('show');
-        });
-        document.addEventListener('click', (e) => {
-          if (!e.target.closest('.nav-menu-wrapper')) {
-            menu.classList.remove('show');
-          }
-        });
-      }
-    });
-  </script>
 </body>
 </html>

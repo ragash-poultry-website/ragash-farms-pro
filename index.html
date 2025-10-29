@@ -6,6 +6,7 @@
   <meta name="description" content="Ragash Farms – Premium poultry and farm-fresh eggs, ethically raised in Edo State. Local pickup only.">
   <title>Ragash Farms – Premium Poultry, Edo State</title>
   <style>
+    /* ====== PROFESSIONAL STYLES ====== */
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Montserrat:wght@400;500;600;700&display=swap');
     :root {
       --primary: #2E5939;
@@ -101,7 +102,7 @@
       text-align: center;
       position: relative;
       overflow: hidden;
-      background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.6)), #e0e0e0 no-repeat center center/cover;
+      background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.6)), url('assets/images/broilers-bg.jpg') no-repeat center center/cover;
     }
     .hero-content {
       position: relative;
@@ -264,43 +265,14 @@
       box-shadow: 0 8px 25px rgba(37, 211, 102, 0.6);
     }
     @media (max-width: 768px) {
-      .menu-toggle { display: block; }
-      .nav-menu {
-        position: absolute;
-        top: 100%;
-        right: 0;
-        background: white;
-        flex-direction: column;
-        width: 220px;
-        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-        border-radius: 12px;
-        padding: 1rem 0;
-        display: none;
-        z-index: 1001;
-      }
-      .nav-menu.show { display: flex; }
-      .nav-menu li {
-        width: 100%;
-        text-align: center;
-        padding: 0.6rem 0;
-      }
-      .nav-menu a {
-        display: block;
-        padding: 0.5rem 1.5rem;
-        color: var(--dark);
-      }
-      .nav-menu a:hover {
-        background: var(--light);
-        color: var(--secondary);
-      }
       .hero h1 { font-size: 2.8rem; }
       .hero p { font-size: 1.1rem; }
       .section { padding: 5rem 1.5rem; }
       .section-title { font-size: 2.2rem; }
-    }
-    @media (max-width: 480px) {
-      .hero h1 { font-size: 2.3rem; }
-      .btn { padding: 0.8rem 2rem; }
+      .booking-card {
+        margin: 1rem;
+        border-radius: 12px;
+      }
     }
   </style>
 </head>
@@ -308,23 +280,20 @@
   <nav class="navbar" id="navbar">
     <div class="nav-container">
       <a href="index.html" class="logo">Ragash<span>Farms</span></a>
-      <div class="nav-menu-wrapper">
-        <button class="menu-toggle" id="menuToggle">☰</button>
-        <ul class="nav-menu" id="navMenu">
-          <li><a href="about.html">About</a></li>
-          <li><a href="products.html">Products</a></li>
-          <li><a href="booking.html">Book Now</a></li>
-          <li><a href="gallery.html">Gallery</a></li>
-          <li><a href="contact.html">Contact</a></li>
-        </ul>
-      </div>
+      <ul class="nav-menu">
+        <li><a href="about.html">About</a></li>
+        <li><a href="products.html">Products</a></li>
+        <li><a href="booking.html">Book Now</a></li>
+        <li><a href="gallery.html">Gallery</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
     </div>
   </nav>
 
   <section class="hero">
     <div class="hero-content">
       <h1>Fresh Poultry, Trusted Quality</h1>
-      <p>Premium poultry and farm-fresh eggs — ethically raised on our private farm in Edo State. Local pickup only.</p>
+      <p>Premium broilers and farm-fresh eggs — ethically raised on our private farm in Edo State. Local pickup only.</p>
       <a href="booking.html" class="btn">Book Your Order Today</a>
     </div>
   </section>
@@ -385,23 +354,5 @@
   </footer>
 
   <a href="https://wa.me/2348138570933" class="whatsapp-btn" target="_blank">💬</a>
-
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const toggle = document.getElementById('menuToggle');
-      const menu = document.getElementById('navMenu');
-      if (toggle && menu) {
-        toggle.addEventListener('click', (e) => {
-          e.stopPropagation();
-          menu.classList.toggle('show');
-        });
-        document.addEventListener('click', (e) => {
-          if (!e.target.closest('.nav-menu-wrapper')) {
-            menu.classList.remove('show');
-          }
-        });
-      }
-    });
-  </script>
 </body>
 </html>
