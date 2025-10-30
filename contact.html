@@ -6,7 +6,6 @@
   <meta name="description" content="Contact Ragash Farms in Edo State. Phone, email, and location details.">
   <title>Contact | Ragash Farms</title>
   <style>
-    /* ====== SAME CSS AS index.html ====== */
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Montserrat:wght@400;500;600;700&display=swap');
     :root {
       --primary: #2E5939;
@@ -56,7 +55,6 @@
       text-decoration: none;
     }
     .logo span { color: var(--secondary); }
-    .nav-menu-wrapper { position: relative; }
     .menu-toggle {
       display: none;
       background: none;
@@ -64,6 +62,7 @@
       font-size: 1.8rem;
       color: var(--dark);
       cursor: pointer;
+      z-index: 1001;
     }
     .nav-menu {
       display: flex;
@@ -93,6 +92,40 @@
     }
     .nav-menu a:hover::after {
       width: 100%;
+    }
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      top: 80px;
+      left: 0;
+      width: 100%;
+      background: white;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      z-index: 1000;
+    }
+    .mobile-menu.active {
+      display: block;
+    }
+    .mobile-menu ul {
+      list-style: none;
+      padding: 1.5rem 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+    }
+    .mobile-menu a {
+      text-decoration: none;
+      color: var(--dark);
+      font-weight: 600;
+      font-size: 1.2rem;
+      padding: 0.6rem 0;
+      border-bottom: 1px solid #eee;
+    }
+    .mobile-menu a:last-child {
+      border-bottom: none;
+    }
+    .mobile-menu a:hover {
+      color: var(--secondary);
     }
     .hero {
       height: 50vh;
@@ -184,34 +217,11 @@
       box-shadow: 0 8px 25px rgba(37, 211, 102, 0.6);
     }
     @media (max-width: 768px) {
-      .menu-toggle { display: block; }
-      .nav-menu {
-        position: absolute;
-        top: 100%;
-        right: 0;
-        background: white;
-        flex-direction: column;
-        width: 220px;
-        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-        border-radius: 12px;
-        padding: 1rem 0;
-        display: none;
-        z-index: 1001;
-      }
-      .nav-menu.show { display: flex; }
-      .nav-menu li {
-        width: 100%;
-        text-align: center;
-        padding: 0.6rem 0;
-      }
-      .nav-menu a {
+      .menu-toggle {
         display: block;
-        padding: 0.5rem 1.5rem;
-        color: var(--dark);
       }
-      .nav-menu a:hover {
-        background: var(--light);
-        color: var(--secondary);
+      .nav-menu {
+        display: none;
       }
       .hero h1 { font-size: 2.5rem; }
       .section { padding: 4rem 1.5rem; }
@@ -219,21 +229,29 @@
   </style>
 </head>
 <body>
-  <nav class="navbar" id="navbar">
+  <nav class="navbar">
     <div class="nav-container">
       <a href="index.html" class="logo">Ragash<span>Farms</span></a>
-      <div class="nav-menu-wrapper">
-        <button class="menu-toggle" id="menuToggle">☰</button>
-        <ul class="nav-menu" id="navMenu">
-          <li><a href="about.html">About</a></li>
-          <li><a href="products.html">Products</a></li>
-          <li><a href="booking.html">Book Now</a></li>
-          <li><a href="gallery.html">Gallery</a></li>
-          <li><a href="contact.html">Contact</a></li>
-        </ul>
-      </div>
+      <button class="menu-toggle" id="menuToggle">☰</button>
+      <ul class="nav-menu">
+        <li><a href="about.html">About</a></li>
+        <li><a href="products.html">Products</a></li>
+        <li><a href="booking.html">Book Now</a></li>
+        <li><a href="gallery.html">Gallery</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
     </div>
   </nav>
+
+  <div class="mobile-menu" id="mobileMenu">
+    <ul>
+      <li><a href="about.html">About</a></li>
+      <li><a href="products.html">Products</a></li>
+      <li><a href="booking.html">Book Now</a></li>
+      <li><a href="gallery.html">Gallery</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+  </div>
 
   <section class="hero">
     <div class="hero-content">
@@ -273,15 +291,16 @@
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const toggle = document.getElementById('menuToggle');
-      const menu = document.getElementById('navMenu');
-      if (toggle && menu) {
-        toggle.addEventListener('click', (e) => {
-          e.stopPropagation();
-          menu.classList.toggle('show');
+      const mobileMenu = document.getElementById('mobileMenu');
+
+      if (toggle && mobileMenu) {
+        toggle.addEventListener('click', () => {
+          mobileMenu.classList.toggle('active');
         });
+
         document.addEventListener('click', (e) => {
-          if (!e.target.closest('.nav-menu-wrapper')) {
-            menu.classList.remove('show');
+          if (!e.target.closest('.navbar') && !e.target.closest('.mobile-menu')) {
+            mobileMenu.classList.remove('active');
           }
         });
       }

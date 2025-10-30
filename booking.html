@@ -6,7 +6,6 @@
   <meta name="description" content="Book and pay for premium poultry from Ragash Farms – live birds, frozen birds, eggs. Local pickup in Edo State.">
   <title>Book & Pay | Ragash Farms</title>
   <style>
-    /* ====== PROFESSIONAL STYLES ====== */
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Montserrat:wght@400;500;600;700&display=swap');
     :root {
       --primary: #2E5939;
@@ -25,12 +24,13 @@
       overflow-x: hidden;
       background: url('assets/images/chicks-booking.jpg') no-repeat center center/cover;
       background-attachment: fixed;
+      color: white;
     }
     h1, h2, h3, h4, h5 {
       font-family: 'Playfair Display', serif;
       font-weight: 700;
       line-height: 1.2;
-      color: white; /* White only for headings on background */
+      color: white;
     }
     .navbar {
       background: rgba(255, 255, 255, 0.95);
@@ -59,7 +59,6 @@
       text-decoration: none;
     }
     .logo span { color: var(--secondary); }
-    .nav-menu-wrapper { position: relative; }
     .menu-toggle {
       display: none;
       background: none;
@@ -67,6 +66,7 @@
       font-size: 1.8rem;
       color: var(--dark);
       cursor: pointer;
+      z-index: 1001;
     }
     .nav-menu {
       display: flex;
@@ -97,6 +97,40 @@
     .nav-menu a:hover::after {
       width: 100%;
     }
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      top: 80px;
+      left: 0;
+      width: 100%;
+      background: white;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      z-index: 1000;
+    }
+    .mobile-menu.active {
+      display: block;
+    }
+    .mobile-menu ul {
+      list-style: none;
+      padding: 1.5rem 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+    }
+    .mobile-menu a {
+      text-decoration: none;
+      color: var(--dark);
+      font-weight: 600;
+      font-size: 1.2rem;
+      padding: 0.6rem 0;
+      border-bottom: 1px solid #eee;
+    }
+    .mobile-menu a:last-child {
+      border-bottom: none;
+    }
+    .mobile-menu a:hover {
+      color: var(--secondary);
+    }
     .hero {
       height: 50vh;
       display: flex;
@@ -105,7 +139,7 @@
       text-align: center;
       position: relative;
       overflow: hidden;
-      background: transparent; /* No dark overlay */
+      background: transparent;
     }
     .hero-content {
       position: relative;
@@ -126,7 +160,7 @@
       box-shadow: 0 20px 60px rgba(0,0,0,0.12);
       max-width: 700px;
       margin: 4rem auto;
-      color: var(--dark); /* ✅ DARK TEXT INSIDE CARD */
+      color: var(--dark);
     }
     .form-step {
       padding: 2.5rem;
@@ -165,7 +199,7 @@
       padding: 1.2rem;
       margin: 1.8rem 0;
       font-size: 0.95rem;
-      color: var(--dark); /* ✅ DARK TEXT FOR PICKUP INSTRUCTIONS */
+      color: var(--dark);
     }
     .btn {
       display: inline-block;
@@ -231,34 +265,11 @@
       font-size: 1rem;
     }
     @media (max-width: 768px) {
-      .menu-toggle { display: block; }
-      .nav-menu {
-        position: absolute;
-        top: 100%;
-        right: 0;
-        background: white;
-        flex-direction: column;
-        width: 220px;
-        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-        border-radius: 12px;
-        padding: 1rem 0;
-        display: none;
-        z-index: 1001;
-      }
-      .nav-menu.show { display: flex; }
-      .nav-menu li {
-        width: 100%;
-        text-align: center;
-        padding: 0.6rem 0;
-      }
-      .nav-menu a {
+      .menu-toggle {
         display: block;
-        padding: 0.5rem 1.5rem;
-        color: var(--dark);
       }
-      .nav-menu a:hover {
-        background: var(--light);
-        color: var(--secondary);
+      .nav-menu {
+        display: none;
       }
       .hero h1 { font-size: 2.5rem; }
       .booking-card { margin: 2rem 1rem; border-radius: 20px; }
@@ -267,9 +278,10 @@
   </style>
 </head>
 <body>
-  <nav class="navbar" id="navbar">
+  <nav class="navbar">
     <div class="nav-container">
       <a href="index.html" class="logo">Ragash<span>Farms</span></a>
+      <button class="menu-toggle" id="menuToggle">☰</button>
       <ul class="nav-menu">
         <li><a href="about.html">About</a></li>
         <li><a href="products.html">Products</a></li>
@@ -280,6 +292,16 @@
     </div>
   </nav>
 
+  <div class="mobile-menu" id="mobileMenu">
+    <ul>
+      <li><a href="about.html">About</a></li>
+      <li><a href="products.html">Products</a></li>
+      <li><a href="booking.html">Book Now</a></li>
+      <li><a href="gallery.html">Gallery</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+  </div>
+
   <section class="hero">
     <div class="hero-content">
       <h1>Book & Pay Now</h1>
@@ -287,7 +309,6 @@
   </section>
 
   <div class="booking-card">
-    <!-- Step 1: Form -->
     <div class="form-step active" id="step1">
       <form id="bookingForm">
         <div class="form-group">
@@ -325,7 +346,6 @@
       </form>
     </div>
 
-    <!-- Step 2: Review -->
     <div class="form-step" id="step2">
       <h3 style="text-align:center; color:var(--primary); margin-bottom:1.5rem;">Review Your Order</h3>
       <div id="reviewContent" style="background:#f9f9f9; padding:1.5rem; border-radius:12px; margin-bottom:1.5rem; color:var(--dark);"></div>
@@ -333,7 +353,6 @@
       <button type="button" id="payBtn" class="btn" style="margin-top:0.5rem;">✅ Confirm & Submit</button>
     </div>
 
-    <!-- Step 3: Success -->
     <div class="form-step" id="step3">
       <div class="success-message">
         <h3>✅ Booking Submitted!</h3>
@@ -351,9 +370,7 @@
 
   <a href="https://wa.me/2348138570933" class="whatsapp-btn" target="_blank">💬</a>
 
-  <!-- Paystack -->
   <script src="https://js.paystack.co/v1/inline.js"></script>
-  <!-- EmailJS -->
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
   <script type="text/javascript">
     (function() {
@@ -364,19 +381,7 @@
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const toggle = document.getElementById('menuToggle');
-      const menu = document.getElementById('navMenu');
-      if (toggle && menu) {
-        toggle.addEventListener('click', (e) => {
-          e.stopPropagation();
-          menu.classList.toggle('show');
-        });
-        document.addEventListener('click', (e) => {
-          if (!e.target.closest('.nav-menu-wrapper')) {
-            menu.classList.remove('show');
-          }
-        });
-      }
-
+      const mobileMenu = document.getElementById('mobileMenu');
       const step1 = document.getElementById('step1');
       const step2 = document.getElementById('step2');
       const step3 = document.getElementById('step3');
@@ -385,6 +390,18 @@
       const payBtn = document.getElementById('payBtn');
       const reviewContent = document.getElementById('reviewContent');
       const whatsappConfirm = document.getElementById('whatsappConfirm');
+
+      if (toggle && mobileMenu) {
+        toggle.addEventListener('click', () => {
+          mobileMenu.classList.toggle('active');
+        });
+
+        document.addEventListener('click', (e) => {
+          if (!e.target.closest('.navbar') && !e.target.closest('.mobile-menu')) {
+            mobileMenu.classList.remove('active');
+          }
+        });
+      }
 
       document.querySelector('input[name="pickupDate"]').addEventListener('input', function() {
         if (new Date(this.value).getDay() === 0) {

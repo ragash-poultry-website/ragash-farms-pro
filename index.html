@@ -6,8 +6,8 @@
   <meta name="description" content="Ragash Farms – Premium poultry and farm-fresh eggs, ethically raised in Edo State. Local pickup only.">
   <title>Ragash Farms – Premium Poultry, Edo State</title>
   <style>
-    /* ====== PROFESSIONAL STYLES ====== */
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Montserrat:wght@400;500;600;700&display=swap');
+
     :root {
       --primary: #2E5939;
       --secondary: #D35400;
@@ -16,7 +16,13 @@
       --dark: #2C3E50;
       --gray: #7F8C8D;
     }
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
     body {
       font-family: 'Montserrat', sans-serif;
       background: var(--light);
@@ -24,11 +30,14 @@
       line-height: 1.7;
       overflow-x: hidden;
     }
+
     h1, h2, h3, h4, h5 {
       font-family: 'Playfair Display', serif;
       font-weight: 700;
       line-height: 1.2;
     }
+
+    /* Navbar */
     .navbar {
       background: rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(10px);
@@ -39,6 +48,7 @@
       z-index: 1000;
       transition: all 0.3s ease;
     }
+
     .nav-container {
       max-width: 1400px;
       margin: 0 auto;
@@ -48,6 +58,7 @@
       align-items: center;
       height: 80px;
     }
+
     .logo {
       font-family: 'Playfair Display', serif;
       font-size: 2.2rem;
@@ -55,8 +66,12 @@
       color: var(--primary);
       text-decoration: none;
     }
-    .logo span { color: var(--secondary); }
-    .nav-menu-wrapper { position: relative; }
+
+    .logo span {
+      color: var(--secondary);
+    }
+
+    /* Mobile Menu Button */
     .menu-toggle {
       display: none;
       background: none;
@@ -64,12 +79,16 @@
       font-size: 1.8rem;
       color: var(--dark);
       cursor: pointer;
+      z-index: 1001;
     }
+
+    /* Desktop Menu */
     .nav-menu {
       display: flex;
       list-style: none;
       gap: 1.8rem;
     }
+
     .nav-menu a {
       text-decoration: none;
       color: var(--dark);
@@ -78,6 +97,7 @@
       position: relative;
       transition: color 0.3s;
     }
+
     .nav-menu a::after {
       content: '';
       position: absolute;
@@ -88,12 +108,57 @@
       background: var(--secondary);
       transition: width 0.3s;
     }
+
     .nav-menu a:hover {
       color: var(--secondary);
     }
+
     .nav-menu a:hover::after {
       width: 100%;
     }
+
+    /* Mobile Menu Dropdown */
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      top: 80px;
+      left: 0;
+      width: 100%;
+      background: white;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      z-index: 1000;
+    }
+
+    .mobile-menu.active {
+      display: block;
+    }
+
+    .mobile-menu ul {
+      list-style: none;
+      padding: 1.5rem 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+    }
+
+    .mobile-menu a {
+      text-decoration: none;
+      color: var(--dark);
+      font-weight: 600;
+      font-size: 1.2rem;
+      padding: 0.6rem 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .mobile-menu a:last-child {
+      border-bottom: none;
+    }
+
+    .mobile-menu a:hover {
+      color: var(--secondary);
+    }
+
+    /* Hero with YOUR broiler image */
     .hero {
       height: 100vh;
       display: flex;
@@ -104,6 +169,7 @@
       overflow: hidden;
       background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.6)), url('assets/images/broilers-bg.jpg') no-repeat center center/cover;
     }
+
     .hero-content {
       position: relative;
       z-index: 2;
@@ -111,16 +177,90 @@
       padding: 0 2rem;
       color: white;
     }
+
     .hero h1 {
       font-size: 4.5rem;
       margin-bottom: 1.2rem;
       text-shadow: 0 2px 10px rgba(0,0,0,0.3);
     }
+
     .hero p {
       font-size: 1.4rem;
       margin-bottom: 2.5rem;
       font-weight: 400;
     }
+
+    /* Sections */
+    .section {
+      padding: 8rem 2rem;
+    }
+
+    .section-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .section-title {
+      text-align: center;
+      font-size: 2.8rem;
+      color: var(--primary);
+      margin-bottom: 4rem;
+      position: relative;
+    }
+
+    .section-title::after {
+      content: '';
+      position: absolute;
+      bottom: -15px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 4px;
+      background: var(--secondary);
+      border-radius: 2px;
+    }
+
+    /* Cards */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2.5rem;
+    }
+
+    .card {
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+      transition: all 0.4s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 50px rgba(0,0,0,0.15);
+    }
+
+    .card-img {
+      height: 220px;
+      background: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 3rem;
+    }
+
+    .card-content {
+      padding: 2rem;
+    }
+
+    .card h3 {
+      font-size: 1.6rem;
+      color: var(--primary);
+      margin-bottom: 1rem;
+    }
+
+    /* Buttons */
     .btn {
       display: inline-block;
       background: var(--secondary);
@@ -134,114 +274,14 @@
       transition: all 0.4s ease;
       box-shadow: 0 4px 20px rgba(211, 84, 0, 0.3);
     }
+
     .btn:hover {
       background: #b04a00;
       transform: translateY(-4px);
       box-shadow: 0 8px 25px rgba(211, 84, 0, 0.5);
     }
-    .section {
-      padding: 8rem 2rem;
-    }
-    .section-container {
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-    .section-title {
-      text-align: center;
-      font-size: 2.8rem;
-      color: var(--primary);
-      margin-bottom: 4rem;
-      position: relative;
-    }
-    .section-title::after {
-      content: '';
-      position: absolute;
-      bottom: -15px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 80px;
-      height: 4px;
-      background: var(--secondary);
-      border-radius: 2px;
-    }
-    .card-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 2.5rem;
-    }
-    .card {
-      background: white;
-      border-radius: 20px;
-      overflow: hidden;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.08);
-      transition: all 0.4s ease;
-    }
-    .card:hover {
-      transform: translateY(-10px);
-      box-shadow: 0 15px 50px rgba(0,0,0,0.15);
-    }
-    .card-img {
-      height: 220px;
-      background: var(--primary);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 3rem;
-    }
-    .card-content {
-      padding: 2rem;
-    }
-    .card h3 {
-      font-size: 1.6rem;
-      color: var(--primary);
-      margin-bottom: 1rem;
-    }
-    .footer {
-      background: var(--dark);
-      color: white;
-      padding: 5rem 2rem 3rem;
-    }
-    .footer-container {
-      max-width: 1200px;
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 3rem;
-    }
-    .footer h3 {
-      font-size: 1.5rem;
-      margin-bottom: 1.5rem;
-      position: relative;
-      padding-bottom: 0.8rem;
-    }
-    .footer h3::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 50px;
-      height: 3px;
-      background: var(--secondary);
-    }
-    .footer p, .footer a {
-      color: #ecf0f1;
-      text-decoration: none;
-      margin-bottom: 0.8rem;
-      display: block;
-      transition: color 0.3s;
-    }
-    .footer a:hover {
-      color: var(--accent);
-    }
-    .copyright {
-      text-align: center;
-      padding-top: 3rem;
-      margin-top: 3rem;
-      border-top: 1px solid #34495e;
-      color: #95a5a6;
-      font-size: 1rem;
-    }
+
+    /* WhatsApp Button */
     .whatsapp-btn {
       position: fixed;
       bottom: 30px;
@@ -260,26 +300,88 @@
       z-index: 1000;
       transition: all 0.3s;
     }
+
     .whatsapp-btn:hover {
       transform: scale(1.1);
       box-shadow: 0 8px 25px rgba(37, 211, 102, 0.6);
     }
+
+    /* Footer */
+    .footer {
+      background: var(--dark);
+      color: white;
+      padding: 5rem 2rem 3rem;
+      text-align: center;
+    }
+
+    .footer-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 3rem;
+    }
+
+    .footer h3 {
+      font-size: 1.5rem;
+      margin-bottom: 1.5rem;
+      position: relative;
+      padding-bottom: 0.8rem;
+    }
+
+    .footer h3::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 50px;
+      height: 3px;
+      background: var(--secondary);
+    }
+
+    .footer p, .footer a {
+      color: #ecf0f1;
+      text-decoration: none;
+      margin-bottom: 0.8rem;
+      display: block;
+      transition: color 0.3s;
+    }
+
+    .footer a:hover {
+      color: var(--accent);
+    }
+
+    .copyright {
+      padding-top: 3rem;
+      margin-top: 3rem;
+      border-top: 1px solid #34495e;
+      color: #95a5a6;
+      font-size: 1rem;
+    }
+
+    /* Responsive */
     @media (max-width: 768px) {
+      .menu-toggle {
+        display: block;
+      }
+
+      .nav-menu {
+        display: none;
+      }
+
       .hero h1 { font-size: 2.8rem; }
       .hero p { font-size: 1.1rem; }
       .section { padding: 5rem 1.5rem; }
       .section-title { font-size: 2.2rem; }
-      .booking-card {
-        margin: 1rem;
-        border-radius: 12px;
-      }
     }
   </style>
 </head>
 <body>
+  <!-- ✅ Updated Navbar (mobile-friendly) -->
   <nav class="navbar" id="navbar">
     <div class="nav-container">
       <a href="index.html" class="logo">Ragash<span>Farms</span></a>
+      <button class="menu-toggle" id="menuToggle">☰</button>
       <ul class="nav-menu">
         <li><a href="about.html">About</a></li>
         <li><a href="products.html">Products</a></li>
@@ -290,10 +392,21 @@
     </div>
   </nav>
 
+  <div class="mobile-menu" id="mobileMenu">
+    <ul>
+      <li><a href="about.html">About</a></li>
+      <li><a href="products.html">Products</a></li>
+      <li><a href="booking.html">Book Now</a></li>
+      <li><a href="gallery.html">Gallery</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+  </div>
+
+  <!-- ✅ Hero with YOUR broiler image -->
   <section class="hero">
     <div class="hero-content">
       <h1>Fresh Poultry, Trusted Quality</h1>
-      <p>Premium broilers and farm-fresh eggs — ethically raised on our private farm in Edo State. Local pickup only.</p>
+      <p>Premium poultry and farm-fresh eggs — ethically raised on our private farm in Edo State. Local pickup only.</p>
       <a href="booking.html" class="btn">Book Your Order Today</a>
     </div>
   </section>
@@ -354,5 +467,25 @@
   </footer>
 
   <a href="https://wa.me/2348138570933" class="whatsapp-btn" target="_blank">💬</a>
+
+  <!-- ✅ Mobile Menu Script (no conflict with your existing code) -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const toggle = document.getElementById('menuToggle');
+      const mobileMenu = document.getElementById('mobileMenu');
+
+      if (toggle && mobileMenu) {
+        toggle.addEventListener('click', () => {
+          mobileMenu.classList.toggle('active');
+        });
+
+        document.addEventListener('click', (e) => {
+          if (!e.target.closest('.navbar') && !e.target.closest('.mobile-menu')) {
+            mobileMenu.classList.remove('active');
+          }
+        });
+      }
+    });
+  </script>
 </body>
 </html>
