@@ -661,6 +661,19 @@
         else if (order.product === "Organic Eggs") amount = 900 * order.quantity * 100;
         order.amount = amount;
 
+        // ✅ Update booked count in localStorage
+        let products = JSON.parse(localStorage.getItem('ragashProducts')) || {
+          "Live Birds": { enabled: true, max: 50, booked: 0 },
+          "Frozen Birds": { enabled: true, max: 30, booked: 0 },
+          "Processed Chicken": { enabled: true, max: 40, booked: 0 },
+          "Organic Eggs": { enabled: true, max: 20, booked: 0 }
+        };
+
+        if (products[order.product]) {
+          products[order.product].booked = (products[order.product].booked || 0) + parseInt(order.quantity);
+          localStorage.setItem('ragashProducts', JSON.stringify(products));
+        }
+
         const handler = PaystackPop.setup({
           key: 'pk_test_4b803c9ee58a19605d8a40c2932e3bd2cffa03ae',
           email: 'ragashfarms@gmail.com',
