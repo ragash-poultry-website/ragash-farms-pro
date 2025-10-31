@@ -153,7 +153,7 @@
       padding: 6rem 2rem;
     }
     .section-container {
-      max-width: 500px;
+      max-width: 800px;
       margin: 0 auto;
     }
     .card {
@@ -180,11 +180,6 @@
       font-size: 1rem;
       transition: all 0.3s;
     }
-    .form-control:focus {
-      border-color: var(--secondary);
-      outline: none;
-      box-shadow: 0 0 0 3px rgba(211, 84, 0, 0.1);
-    }
     .btn {
       display: inline-block;
       background: var(--secondary);
@@ -198,6 +193,7 @@
       transition: all 0.4s ease;
       box-shadow: 0 4px 20px rgba(211, 84, 0, 0.3);
       width: 100%;
+      margin-top: 0.5rem;
     }
     .btn:hover {
       background: #b04a00;
@@ -208,11 +204,75 @@
       display: none;
       margin-top: 2rem;
     }
+    .product-item {
+      background: #f8f9fa;
+      padding: 1.2rem;
+      border-radius: 12px;
+      margin-bottom: 1.2rem;
+      border: 1px solid #e9ecef;
+    }
+    .product-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    .product-title {
+      font-weight: 700;
+      color: var(--primary);
+    }
+    .product-controls {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+    .status-indicator {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #e74c3c;
+    }
+    .status-indicator.available {
+      background: #2ecc71;
+    }
     .footer {
       background: var(--dark);
       color: white;
       padding: 4rem 2rem 2rem;
       text-align: center;
+    }
+    .footer-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 3rem;
+    }
+    .footer h3 {
+      font-size: 1.5rem;
+      margin-bottom: 1.5rem;
+      position: relative;
+      padding-bottom: 0.8rem;
+    }
+    .footer h3::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 50px;
+      height: 3px;
+      background: var(--secondary);
+    }
+    .footer p, .footer a {
+      color: #ecf0f1;
+      text-decoration: none;
+      margin-bottom: 0.8rem;
+      display: block;
+      transition: color 0.3s;
+    }
+    .footer a:hover {
+      color: var(--accent);
     }
     .copyright {
       padding-top: 2rem;
@@ -292,22 +352,42 @@
       <div class="card">
         <form id="adminLogin">
           <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" id="password" class="form-control" required>
+            <label for="password">Admin Password</label>
+            <input type="password" id="password" class="form-control" placeholder="Enter password" required>
           </div>
-          <button type="submit" class="btn">Login</button>
+          <button type="submit" class="btn">Unlock Admin Panel</button>
         </form>
         <div id="adminContent">
-          <h3 style="margin-bottom:1rem; color: var(--primary);">Recent Bookings</h3>
-          <p>Check your Gmail (<strong>ragashfarms@gmail.com</strong>) for new bookings.</p>
-          <p>Each booking arrives as a pre-filled email with all details.</p>
-          <a href="mailto:ragashfarms@gmail.com" class="btn" style="background:#25D366; margin-top:1rem;">Open Gmail</a>
+          <h3 style="text-align:center; color:var(--primary); margin-bottom:1.5rem;">Manage Products</h3>
+          <div id="productList"></div>
+          <button id="saveBtn" class="btn" style="margin-top:1.5rem;">💾 Save Changes</button>
+          <a href="mailto:ragashfarms@gmail.com" class="btn" style="background:#25D366; margin-top:1rem;">📧 View Bookings in Gmail</a>
         </div>
       </div>
     </div>
   </section>
 
   <footer class="footer">
+    <div class="footer-container">
+      <div>
+        <h3>Ragash Farms</h3>
+        <p>Premium poultry farm in Edo State, Nigeria.</p>
+        <p>Local pickup only. Freshness guaranteed.</p>
+      </div>
+      <div>
+        <h3>Quick Links</h3>
+        <a href="about.html">About Us</a>
+        <a href="products.html">Products</a>
+        <a href="booking.html">Book Now</a>
+        <a href="gallery.html">Gallery</a>
+      </div>
+      <div>
+        <h3>Contact</h3>
+        <p>📱 +234 813 857 0933</p>
+        <p>✉️ ragashfarms@gmail.com</p>
+        <p>📍 Edo State, Nigeria</p>
+      </div>
+    </div>
     <div class="copyright">
       &copy; 2025 Ragash Farms. All rights reserved.
     </div>
@@ -319,6 +399,10 @@
     document.addEventListener('DOMContentLoaded', () => {
       const toggle = document.getElementById('menuToggle');
       const mobileMenu = document.getElementById('mobileMenu');
+      const adminLogin = document.getElementById('adminLogin');
+      const adminContent = document.getElementById('adminContent');
+      const productList = document.getElementById('productList');
+      const saveBtn = document.getElementById('saveBtn');
 
       if (toggle && mobileMenu) {
         toggle.addEventListener('click', () => {
@@ -332,13 +416,84 @@
         });
       }
 
-      document.getElementById('adminLogin').addEventListener('submit', function(e) {
+      // Default products
+      const defaultProducts = {
+        "Live Birds": { enabled: true, max: 50, booked: 0 },
+        "Frozen Birds": { enabled: true, max: 30, booked: 0 },
+        "Processed Chicken": { enabled: true, max: 40, booked: 0 },
+        "Organic Eggs": { enabled: true, max: 20, booked: 0 }
+      };
+
+      // Load from localStorage or use defaults
+      let products = JSON.parse(localStorage.getItem('ragashProducts')) || defaultProducts;
+
+      // Render product list
+      function renderProducts() {
+        productList.innerHTML = '';
+        for (const [name, data] of Object.entries(products)) {
+          const booked = data.booked || 0;
+          const available = data.enabled && booked < data.max;
+          
+          const item = document.createElement('div');
+          item.className = 'product-item';
+          item.innerHTML = `
+            <div class="product-header">
+              <div>
+                <div class="product-title">${name}</div>
+                <div style="font-size:0.9rem; color:var(--gray); margin-top:0.3rem;">
+                  Booked: ${booked} / Max: ${data.max}
+                  <span class="status-indicator ${available ? 'available' : ''}"></span>
+                  ${available ? 'Available' : 'Unavailable'}
+                </div>
+              </div>
+              <div class="product-controls">
+                <label style="display:flex;align-items:center;gap:0.5rem;">
+                  <input type="checkbox" ${data.enabled ? 'checked' : ''} data-name="${name}" class="enable-checkbox">
+                  Enable
+                </label>
+                <input type="number" min="0" value="${data.max}" data-name="${name}" class="max-input" style="width:80px; padding:0.4rem; border:1px solid #ddd; border-radius:4px;">
+              </div>
+            </div>
+          `;
+          productList.appendChild(item);
+        }
+      }
+
+      // Save changes
+      saveBtn.addEventListener('click', () => {
+        const checkboxes = document.querySelectorAll('.enable-checkbox');
+        const maxInputs = document.querySelectorAll('.max-input');
+
+        checkboxes.forEach(cb => {
+          const name = cb.dataset.name;
+          products[name].enabled = cb.checked;
+        });
+
+        maxInputs.forEach(input => {
+          const name = input.dataset.name;
+          const max = parseInt(input.value) || 0;
+          products[name].max = max;
+          // If booked > max, cap it
+          if (products[name].booked > max) {
+            products[name].booked = max;
+          }
+        });
+
+        localStorage.setItem('ragashProducts', JSON.stringify(products));
+        alert('✅ Product settings saved!');
+        renderProducts();
+      });
+
+      // Login
+      adminLogin.addEventListener('submit', function(e) {
         e.preventDefault();
-        if (document.getElementById('password').value === 'RagashSecure2025!') {
-          document.getElementById('adminLogin').style.display = 'none';
-          document.getElementById('adminContent').style.display = 'block';
+        const password = document.getElementById('password').value;
+        if (password === 'RagashSecure2025!') {
+          adminLogin.style.display = 'none';
+          adminContent.style.display = 'block';
+          renderProducts();
         } else {
-          alert('❌ Incorrect password!');
+          alert('❌ Incorrect password. Access denied.');
         }
       });
     });
