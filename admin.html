@@ -416,18 +416,49 @@
         });
       }
 
-      // Default products
-      const defaultProducts = {
-        "Live Birds": { enabled: true, max: 50, booked: 0 },
-        "Frozen Birds": { enabled: true, max: 30, booked: 0 },
-        "Processed Chicken": { enabled: true, max: 40, booked: 0 },
-        "Organic Eggs": { enabled: true, max: 20, booked: 0 }
-      };
+      // 🔑 Your Gist Configuration
+      const GIST_ID = 'aa8076fceb6f54dab1f375f0f75ab39d';
+      let products = {};
 
-      // Load from localStorage or use defaults
-      let products = JSON.parse(localStorage.getItem('ragashProducts')) || defaultProducts;
+      // Load from Gist
+      async function loadProducts() {
+        try {
+          const response = await fetch(`https://api.github.com/gists/${GIST_ID}`);
+          const data = await response.json();
+          const content = data.files['ragash-products.json'].content;
+          products = JSON.parse(content).products;
+          renderProducts();
+        } catch (error) {
+          console.error('Failed to load products:', error);
+          alert('❌ Could not load product data. Check Gist visibility.');
+        }
+      }
 
-      // Render product list
+      // Save to Gist (requires token — for now, save to localStorage as fallback)
+      function saveProducts() {
+        const checkboxes = document.querySelectorAll('.enable-checkbox');
+        const maxInputs = document.querySelectorAll('.max-input');
+
+        checkboxes.forEach(cb => {
+          const name = cb.dataset.name;
+          products[name].enabled = cb.checked;
+        });
+
+        maxInputs.forEach(input => {
+          const name = input.dataset.name;
+          const max = parseInt(input.value) || 0;
+          products[name].max = max;
+          if (products[name].booked > max) {
+            products[name].booked = max;
+          }
+        });
+
+        // Save to localStorage (since we can't write to Gist without token in frontend)
+        localStorage.setItem('ragashProducts', JSON.stringify(products));
+        alert('✅ Settings saved locally. To sync online, add GitHub token.');
+        renderProducts();
+      }
+
       function renderProducts() {
         productList.innerHTML = '';
         for (const [name, data] of Object.entries(products)) {
@@ -459,43 +490,28 @@
         }
       }
 
-      // Save changes
-      saveBtn.addEventListener('click', () => {
-        const checkboxes = document.querySelectorAll('.enable-checkbox');
-        const maxInputs = document.querySelectorAll('.max-input');
-
-        checkboxes.forEach(cb => {
-          const name = cb.dataset.name;
-          products[name].enabled = cb.checked;
-        });
-
-        maxInputs.forEach(input => {
-          const name = input.dataset.name;
-          const max = parseInt(input.value) || 0;
-          products[name].max = max;
-          // If booked > max, cap it
-          if (products[name].booked > max) {
-            products[name].booked = max;
-          }
-        });
-
-        localStorage.setItem('ragashProducts', JSON.stringify(products));
-        alert('✅ Product settings saved!');
-        renderProducts();
-      });
-
-      // Login
       adminLogin.addEventListener('submit', function(e) {
         e.preventDefault();
         const password = document.getElementById('password').value;
         if (password === 'RagashSecure2025!') {
           adminLogin.style.display = 'none';
           adminContent.style.display = 'block';
-          renderProducts();
+          // Try Gist first, fallback to localStorage
+          loadProducts().catch(() => {
+            products = JSON.parse(localStorage.getItem('ragashProducts')) || {
+              "Live Birds": { enabled: true, max: 50, booked: 0 },
+              "Frozen Birds": { enabled: true, max: 30, booked: 0 },
+              "Processed Chicken": { enabled: true, max: 40, booked: 0 },
+              "Organic Eggs": { enabled: true, max: 20, booked: 0 }
+            };
+            renderProducts();
+          });
         } else {
           alert('❌ Incorrect password. Access denied.');
         }
       });
+
+      saveBtn.addEventListener('click', saveProducts);
     });
   </script>
 </body>
