@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="View photos from Ragash Farms in Edo State.">
+  <title>Gallery | Ragash Farms</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Montserrat:wght@400;500;600;700&display=swap');
+    :root {
+      --primary: #2E5939;
+      --secondary: #D35400;
+      --accent: #8BC34A;
+      --light: #FDFDF9;
+      --dark: #2C3E50;
+      --gray: #7F8C8D;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: var(--light);
+      color: var(--dark);
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+    h1, h2, h3, h4, h5 {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+    .navbar {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 1000;
+      transition: all 0.3s ease;
+    }
+    .nav-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 80px;
+    }
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--primary);
+      text-decoration: none;
+    }
+    .logo span { color: var(--secondary); }
+    .menu-toggle {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 1.8rem;
+      color: var(--dark);
+      cursor: pointer;
+      z-index: 1001;
+    }
+    .nav-menu {
+      display: flex;
+      list-style: none;
+      gap: 1.8rem;
+    }
+    .nav-menu a {
+      text-decoration: none;
+      color: var(--dark);
+      font-weight: 600;
+      font-size: 1.05rem;
+      position: relative;
+      transition: color 0.3s;
+    }
+    .nav-menu a::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--secondary);
+      transition: width 0.3s;
+    }
+    .nav-menu a:hover {
+      color: var(--secondary);
+    }
+    .nav-menu a:hover::after {
+      width: 100%;
+    }
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      top: 80px;
+      left: 0;
+      width: 100%;
+      background: white;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      z-index: 1000;
+    }
+    .mobile-menu.active {
+      display: block;
+    }
+    .mobile-menu ul {
+      list-style: none;
+      padding: 1.5rem 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+    }
+    .mobile-menu a {
+      text-decoration: none;
+      color: var(--dark);
+      font-weight: 600;
+      font-size: 1.2rem;
+      padding: 0.6rem 0;
+      border-bottom: 1px solid #eee;
+    }
+    .mobile-menu a:last-child {
+      border-bottom: none;
+    }
+    .mobile-menu a:hover {
+      color: var(--secondary);
+    }
+    .hero {
+      height: 50vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.6)), #e0e0e0 no-repeat center center/cover;
+    }
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 900px;
+      padding: 0 2rem;
+      color: white;
+    }
+    .hero h1 {
+      font-size: 3.5rem;
+      margin-bottom: 1.2rem;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    }
+    .section {
+      padding: 6rem 2rem;
+    }
+    .section-container {
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .btn {
+      display: inline-block;
+      background: var(--secondary);
+      color: white;
+      padding: 0.8rem 2rem;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 1rem;
+      transition: all 0.4s ease;
+      box-shadow: 0 4px 20px rgba(211, 84, 0, 0.3);
+    }
+    .btn:hover {
+      background: #b04a00;
+      transform: translateY(-4px);
+      box-shadow: 0 8px 25px rgba(211, 84, 0, 0.5);
+    }
+    .footer {
+      background: var(--dark);
+      color: white;
+      padding: 4rem 2rem 2rem;
+      text-align: center;
+    }
+    .copyright {
+      padding-top: 2rem;
+      margin-top: 2rem;
+      border-top: 1px solid #34495e;
+      color: #95a5a6;
+      font-size: 1rem;
+    }
+    .whatsapp-btn {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 65px;
+      height: 65px;
+      background: #25D366;
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      text-decoration: none;
+      box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
+      z-index: 1000;
+      transition: all 0.3s;
+    }
+    .whatsapp-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 8px 25px rgba(37, 211, 102, 0.6);
+    }
+    @media (max-width: 768px) {
+      .menu-toggle {
+        display: block;
+      }
+      .nav-menu {
+        display: none;
+      }
+      .hero h1 { font-size: 2.5rem; }
+      .section { padding: 4rem 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="logo">Ragash<span>Farms</span></a>
+      <button class="menu-toggle" id="menuToggle">☰</button>
+      <ul class="nav-menu">
+        <li><a href="about.html">About</a></li>
+        <li><a href="products.html">Products</a></li>
+        <li><a href="booking.html">Book Now</a></li>
+        <li><a href="gallery.html">Gallery</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="mobile-menu" id="mobileMenu">
+    <ul>
+      <li><a href="about.html">About</a></li>
+      <li><a href="products.html">Products</a></li>
+      <li><a href="booking.html">Book Now</a></li>
+      <li><a href="gallery.html">Gallery</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+  </div>
+
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Farm Gallery</h1>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-container">
+      <p style="font-size: 1.2rem;">
+        📸 <strong>Coming Soon!</strong><br>
+        We’re updating our gallery with real photos of our farm, birds, and eggs.<br>
+        Call us at <strong>+234 813 857 0933</strong> to schedule a visit!
+      </p>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="copyright">
+      &copy; 2025 Ragash Farms. All rights reserved.
+    </div>
+  </footer>
+
+  <a href="https://wa.me/2348138570933" class="whatsapp-btn" target="_blank">💬</a>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const toggle = document.getElementById('menuToggle');
+      const mobileMenu = document.getElementById('mobileMenu');
+
+      if (toggle && mobileMenu) {
+        toggle.addEventListener('click', () => {
+          mobileMenu.classList.toggle('active');
+        });
+
+        document.addEventListener('click', (e) => {
+          if (!e.target.closest('.navbar') && !e.target.closest('.mobile-menu')) {
+            mobileMenu.classList.remove('active');
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

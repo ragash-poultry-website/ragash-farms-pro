@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="Book and pay for premium poultry from Ragash Farms – live birds, frozen birds, eggs. Local pickup in Edo State.">
+  <title>Book & Pay | Ragash Farms</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Montserrat:wght@400;500;600;700&display=swap');
+    :root {
+      --primary: #2E5939;
+      --secondary: #D35400;
+      --accent: #8BC34A;
+      --light: #FDFDF9;
+      --dark: #2C3E50;
+      --gray: #7F8C8D;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: var(--light);
+      color: var(--dark);
+      line-height: 1.7;
+      overflow-x: hidden;
+      background: url('assets/images/chicks-booking.jpg') no-repeat center center/cover;
+      background-attachment: fixed;
+      color: white;
+    }
+    h1, h2, h3, h4, h5 {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      line-height: 1.2;
+      color: white;
+    }
+    .navbar {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 1000;
+      transition: all 0.3s ease;
+    }
+    .nav-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 80px;
+    }
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--primary);
+      text-decoration: none;
+    }
+    .logo span { color: var(--secondary); }
+    .menu-toggle {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 1.8rem;
+      color: var(--dark);
+      cursor: pointer;
+      z-index: 1001;
+    }
+    .nav-menu {
+      display: flex;
+      list-style: none;
+      gap: 1.8rem;
+    }
+    .nav-menu a {
+      text-decoration: none;
+      color: var(--dark);
+      font-weight: 600;
+      font-size: 1.05rem;
+      position: relative;
+      transition: color 0.3s;
+    }
+    .nav-menu a::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--secondary);
+      transition: width 0.3s;
+    }
+    .nav-menu a:hover {
+      color: var(--secondary);
+    }
+    .nav-menu a:hover::after {
+      width: 100%;
+    }
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      top: 80px;
+      left: 0;
+      width: 100%;
+      background: white;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      z-index: 1000;
+    }
+    .mobile-menu.active {
+      display: block;
+    }
+    .mobile-menu ul {
+      list-style: none;
+      padding: 1.5rem 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+    }
+    .mobile-menu a {
+      text-decoration: none;
+      color: var(--dark);
+      font-weight: 600;
+      font-size: 1.2rem;
+      padding: 0.6rem 0;
+      border-bottom: 1px solid #eee;
+    }
+    .mobile-menu a:last-child {
+      border-bottom: none;
+    }
+    .mobile-menu a:hover {
+      color: var(--secondary);
+    }
+    .hero {
+      height: 50vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      background: transparent;
+    }
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 900px;
+      padding: 0 2rem;
+      color: white;
+    }
+    .hero h1 {
+      font-size: 3.5rem;
+      margin-bottom: 1.2rem;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    }
+    .booking-card {
+      background: white;
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.12);
+      max-width: 700px;
+      margin: 4rem auto;
+      color: var(--dark);
+    }
+    .form-step {
+      padding: 2.5rem;
+      display: none;
+    }
+    .form-step.active {
+      display: block;
+    }
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    label {
+      display: block;
+      margin-bottom: 0.6rem;
+      font-weight: 700;
+      color: var(--primary);
+      font-size: 1.05rem;
+    }
+    .form-control {
+      width: 100%;
+      padding: 0.9rem;
+      border: 2px solid #eee;
+      border-radius: 12px;
+      font-size: 1rem;
+      transition: all 0.3s;
+    }
+    .pickup-info {
+      background: #f8fff9;
+      border: 1px solid #e0f0e3;
+      border-radius: 16px;
+      padding: 1.2rem;
+      margin: 1.8rem 0;
+      font-size: 0.95rem;
+      color: var(--dark);
+    }
+    .btn {
+      display: inline-block;
+      background: var(--secondary);
+      color: white;
+      padding: 0.9rem 2rem;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 1.1rem;
+      letter-spacing: 0.5px;
+      transition: all 0.4s ease;
+      box-shadow: 0 4px 20px rgba(211, 84, 0, 0.3);
+      width: 100%;
+      margin-top: 0.5rem;
+    }
+    .btn:hover {
+      background: #b04a00;
+      transform: translateY(-4px);
+      box-shadow: 0 8px 25px rgba(211, 84, 0, 0.5);
+    }
+    .whatsapp-btn {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 65px;
+      height: 65px;
+      background: #25D366;
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      text-decoration: none;
+      box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
+      z-index: 1000;
+      transition: all 0.3s;
+    }
+    .whatsapp-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 8px 25px rgba(37, 211, 102, 0.6);
+    }
+    .success-message {
+      text-align: center;
+      padding: 2rem;
+    }
+    .success-message h3 {
+      color: var(--secondary);
+      margin-bottom: 1rem;
+    }
+    .footer {
+      background: var(--dark);
+      color: white;
+      padding: 4rem 2rem 2rem;
+      text-align: center;
+    }
+    .copyright {
+      padding-top: 2rem;
+      margin-top: 2rem;
+      border-top: 1px solid #34495e;
+      color: #95a5a6;
+      font-size: 1rem;
+    }
+    .error {
+      color: #e74c3c;
+      font-size: 0.9rem;
+      margin-top: 0.3rem;
+      display: none;
+    }
+    @media (max-width: 768px) {
+      .menu-toggle {
+        display: block;
+      }
+      .nav-menu {
+        display: none;
+      }
+      .hero h1 { font-size: 2.5rem; }
+      .booking-card { margin: 2rem 1rem; border-radius: 20px; }
+      .form-step { padding: 1.8rem; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="logo">Ragash<span>Farms</span></a>
+      <button class="menu-toggle" id="menuToggle">☰</button>
+      <ul class="nav-menu">
+        <li><a href="about.html">About</a></li>
+        <li><a href="products.html">Products</a></li>
+        <li><a href="booking.html">Book Now</a></li>
+        <li><a href="gallery.html">Gallery</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="mobile-menu" id="mobileMenu">
+    <ul>
+      <li><a href="about.html">About</a></li>
+      <li><a href="products.html">Products</a></li>
+      <li><a href="booking.html">Book Now</a></li>
+      <li><a href="gallery.html">Gallery</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+  </div>
+
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Book & Pay Now</h1>
+    </div>
+  </section>
+
+  <div class="booking-card">
+    <div class="form-step active" id="step1">
+      <form id="bookingForm">
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" name="name" class="form-control" placeholder="e.g., John Doe" required>
+        </div>
+        <div class="form-group">
+          <label>Phone Number</label>
+          <div style="display: flex; gap: 0.5rem;">
+            <select id="countrySelect" class="form-control" style="flex: 1; max-width: 180px;" required>
+              <option value="">-- Select Country --</option>
+              <option value="+93">Afghanistan (+93)</option>
+              <option value="+355">Albania (+355)</option>
+              <option value="+213">Algeria (+213)</option>
+              <option value="+376">Andorra (+376)</option>
+              <option value="+244">Angola (+244)</option>
+              <option value="+1268">Antigua and Barbuda (+1-268)</option>
+              <option value="+54">Argentina (+54)</option>
+              <option value="+374">Armenia (+374)</option>
+              <option value="+61">Australia (+61)</option>
+              <option value="+43">Austria (+43)</option>
+              <option value="+994">Azerbaijan (+994)</option>
+              <option value="+1242">Bahamas (+1-242)</option>
+              <option value="+973">Bahrain (+973)</option>
+              <option value="+880">Bangladesh (+880)</option>
+              <option value="+1246">Barbados (+1-246)</option>
+              <option value="+375">Belarus (+375)</option>
+              <option value="+32">Belgium (+32)</option>
+              <option value="+501">Belize (+501)</option>
+              <option value="+229">Benin (+229)</option>
+              <option value="+975">Bhutan (+975)</option>
+              <option value="+591">Bolivia (+591)</option>
+              <option value="+387">Bosnia and Herzegovina (+387)</option>
+              <option value="+267">Botswana (+267)</option>
+              <option value="+55">Brazil (+55)</option>
+              <option value="+673">Brunei (+673)</option>
+              <option value="+359">Bulgaria (+359)</option>
+              <option value="+226">Burkina Faso (+226)</option>
+              <option value="+257">Burundi (+257)</option>
+              <option value="+855">Cambodia (+855)</option>
+              <option value="+237">Cameroon (+237)</option>
+              <option value="+1">Canada (+1)</option>
+              <option value="+238">Cape Verde (+238)</option>
+              <option value="+236">Central African Republic (+236)</option>
+              <option value="+235">Chad (+235)</option>
+              <option value="+56">Chile (+56)</option>
+              <option value="+86">China (+86)</option>
+              <option value="+57">Colombia (+57)</option>
+              <option value="+269">Comoros (+269)</option>
+              <option value="+242">Congo (+242)</option>
+              <option value="+506">Costa Rica (+506)</option>
+              <option value="+385">Croatia (+385)</option>
+              <option value="+53">Cuba (+53)</option>
+              <option value="+357">Cyprus (+357)</option>
+              <option value="+420">Czech Republic (+420)</option>
+              <option value="+45">Denmark (+45)</option>
+              <option value="+253">Djibouti (+253)</option>
+              <option value="+1767">Dominica (+1-767)</option>
+              <option value="+1809">Dominican Republic (+1-809)</option>
+              <option value="+670">East Timor (+670)</option>
+              <option value="+593">Ecuador (+593)</option>
+              <option value="+20">Egypt (+20)</option>
+              <option value="+503">El Salvador (+503)</option>
+              <option value="+240">Equatorial Guinea (+240)</option>
+              <option value="+291">Eritrea (+291)</option>
+              <option value="+372">Estonia (+372)</option>
+              <option value="+251">Ethiopia (+251)</option>
+              <option value="+679">Fiji (+679)</option>
+              <option value="+358">Finland (+358)</option>
+              <option value="+33">France (+33)</option>
+              <option value="+241">Gabon (+241)</option>
+              <option value="+220">Gambia (+220)</option>
+              <option value="+995">Georgia (+995)</option>
+              <option value="+49">Germany (+49)</option>
+              <option value="+233">Ghana (+233)</option>
+              <option value="+30">Greece (+30)</option>
+              <option value="+1473">Grenada (+1-473)</option>
+              <option value="+502">Guatemala (+502)</option>
+              <option value="+224">Guinea (+224)</option>
+              <option value="+245">Guinea-Bissau (+245)</option>
+              <option value="+592">Guyana (+592)</option>
+              <option value="+509">Haiti (+509)</option>
+              <option value="+504">Honduras (+504)</option>
+              <option value="+36">Hungary (+36)</option>
+              <option value="+354">Iceland (+354)</option>
+              <option value="+91">India (+91)</option>
+              <option value="+62">Indonesia (+62)</option>
+              <option value="+98">Iran (+98)</option>
+              <option value="+964">Iraq (+964)</option>
+              <option value="+353">Ireland (+353)</option>
+              <option value="+972">Israel (+972)</option>
+              <option value="+39">Italy (+39)</option>
+              <option value="+1876">Jamaica (+1-876)</option>
+              <option value="+81">Japan (+81)</option>
+              <option value="+962">Jordan (+962)</option>
+              <option value="+7">Kazakhstan (+7)</option>
+              <option value="+254">Kenya (+254)</option>
+              <option value="+686">Kiribati (+686)</option>
+              <option value="+850">North Korea (+850)</option>
+              <option value="+82">South Korea (+82)</option>
+              <option value="+965">Kuwait (+965)</option>
+              <option value="+996">Kyrgyzstan (+996)</option>
+              <option value="+856">Laos (+856)</option>
+              <option value="+371">Latvia (+371)</option>
+              <option value="+961">Lebanon (+961)</option>
+              <option value="+266">Lesotho (+266)</option>
+              <option value="+231">Liberia (+231)</option>
+              <option value="+218">Libya (+218)</option>
+              <option value="+423">Liechtenstein (+423)</option>
+              <option value="+370">Lithuania (+370)</option>
+              <option value="+352">Luxembourg (+352)</option>
+              <option value="+389">Macedonia (+389)</option>
+              <option value="+261">Madagascar (+261)</option>
+              <option value="+265">Malawi (+265)</option>
+              <option value="+60">Malaysia (+60)</option>
+              <option value="+960">Maldives (+960)</option>
+              <option value="+223">Mali (+223)</option>
+              <option value="+356">Malta (+356)</option>
+              <option value="+692">Marshall Islands (+692)</option>
+              <option value="+222">Mauritania (+222)</option>
+              <option value="+230">Mauritius (+230)</option>
+              <option value="+52">Mexico (+52)</option>
+              <option value="+691">Micronesia (+691)</option>
+              <option value="+373">Moldova (+373)</option>
+              <option value="+377">Monaco (+377)</option>
+              <option value="+976">Mongolia (+976)</option>
+              <option value="+382">Montenegro (+382)</option>
+              <option value="+212">Morocco (+212)</option>
+              <option value="+258">Mozambique (+258)</option>
+              <option value="+95">Myanmar (+95)</option>
+              <option value="+264">Namibia (+264)</option>
+              <option value="+674">Nauru (+674)</option>
+              <option value="+977">Nepal (+977)</option>
+              <option value="+31">Netherlands (+31)</option>
+              <option value="+64">New Zealand (+64)</option>
+              <option value="+505">Nicaragua (+505)</option>
+              <option value="+227">Niger (+227)</option>
+              <option value="+234">Nigeria (+234)</option>
+              <option value="+47">Norway (+47)</option>
+              <option value="+968">Oman (+968)</option>
+              <option value="+92">Pakistan (+92)</option>
+              <option value="+680">Palau (+680)</option>
+              <option value="+507">Panama (+507)</option>
+              <option value="+675">Papua New Guinea (+675)</option>
+              <option value="+595">Paraguay (+595)</option>
+              <option value="+51">Peru (+51)</option>
+              <option value="+63">Philippines (+63)</option>
+              <option value="+48">Poland (+48)</option>
+              <option value="+351">Portugal (+351)</option>
+              <option value="+974">Qatar (+974)</option>
+              <option value="+40">Romania (+40)</option>
+              <option value="+7">Russia (+7)</option>
+              <option value="+250">Rwanda (+250)</option>
+              <option value="+1869">Saint Kitts and Nevis (+1-869)</option>
+              <option value="+1758">Saint Lucia (+1-758)</option>
+              <option value="+1784">Saint Vincent and the Grenadines (+1-784)</option>
+              <option value="+685">Samoa (+685)</option>
+              <option value="+378">San Marino (+378)</option>
+              <option value="+239">Sao Tome and Principe (+239)</option>
+              <option value="+966">Saudi Arabia (+966)</option>
+              <option value="+221">Senegal (+221)</option>
+              <option value="+381">Serbia (+381)</option>
+              <option value="+248">Seychelles (+248)</option>
+              <option value="+232">Sierra Leone (+232)</option>
+              <option value="+65">Singapore (+65)</option>
+              <option value="+421">Slovakia (+421)</option>
+              <option value="+386">Slovenia (+386)</option>
+              <option value="+677">Solomon Islands (+677)</option>
+              <option value="+252">Somalia (+252)</option>
+              <option value="+27">South Africa (+27)</option>
+              <option value="+34">Spain (+34)</option>
+              <option value="+94">Sri Lanka (+94)</option>
+              <option value="+249">Sudan (+249)</option>
+              <option value="+597">Suriname (+597)</option>
+              <option value="+268">Swaziland (+268)</option>
+              <option value="+46">Sweden (+46)</option>
+              <option value="+41">Switzerland (+41)</option>
+              <option value="+963">Syria (+963)</option>
+              <option value="+886">Taiwan (+886)</option>
+              <option value="+992">Tajikistan (+992)</option>
+              <option value="+255">Tanzania (+255)</option>
+              <option value="+66">Thailand (+66)</option>
+              <option value="+228">Togo (+228)</option>
+              <option value="+676">Tonga (+676)</option>
+              <option value="+1868">Trinidad and Tobago (+1-868)</option>
+              <option value="+216">Tunisia (+216)</option>
+              <option value="+90">Turkey (+90)</option>
+              <option value="+993">Turkmenistan (+993)</option>
+              <option value="+688">Tuvalu (+688)</option>
+              <option value="+256">Uganda (+256)</option>
+              <option value="+380">Ukraine (+380)</option>
+              <option value="+971">United Arab Emirates (+971)</option>
+              <option value="+44">United Kingdom (+44)</option>
+              <option value="+1">United States (+1)</option>
+              <option value="+598">Uruguay (+598)</option>
+              <option value="+998">Uzbekistan (+998)</option>
+              <option value="+678">Vanuatu (+678)</option>
+              <option value="+379">Vatican City (+379)</option>
+              <option value="+58">Venezuela (+58)</option>
+              <option value="+84">Vietnam (+84)</option>
+              <option value="+967">Yemen (+967)</option>
+              <option value="+260">Zambia (+260)</option>
+              <option value="+263">Zimbabwe (+263)</option>
+            </select>
+            <input type="tel" id="phoneInput" class="form-control" placeholder="Enter number" style="flex: 2;" required>
+          </div>
+          <div class="error" id="phoneError">Invalid number format</div>
+        </div>
+        <div class="form-group">
+          <label>Product</label>
+          <select name="product" class="form-control" required>
+            <option value="">-- Select Product --</option>
+            <option value="Live Birds">Live Birds (₦6,000 – ₦30,000)</option>
+            <option value="Frozen Birds">Frozen Birds (₦6,000/kg, min 2kg)</option>
+            <option value="Processed Chicken">Processed Chicken (₦5,000/kg, min 2kg)</option>
+            <option value="Organic Eggs">Organic Eggs (₦800–₦1,000/crate, max 5/day)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Quantity</label>
+          <input type="number" name="quantity" class="form-control" min="1" required>
+        </div>
+        <div class="form-group">
+          <label>Preferred Pickup Date</label>
+          <input type="date" name="pickupDate" class="form-control" required>
+        </div>
+        <div class="pickup-info">
+          <strong>📍 Pickup Instructions:</strong><br>
+          Come to the main gate of Ragash Farms, Edo State. Call us on arrival.<br>
+          Bring your own crates/coolers.
+        </div>
+        <button type="button" id="reviewBtn" class="btn">Review Booking</button>
+      </form>
+    </div>
+
+    <div class="form-step" id="step2">
+      <h3 style="text-align:center; color:var(--primary); margin-bottom:1.5rem;">Review Your Order</h3>
+      <div id="reviewContent" style="background:#f9f9f9; padding:1.5rem; border-radius:12px; margin-bottom:1.5rem; color:var(--dark);"></div>
+      <button type="button" id="backBtn" class="btn" style="background:#6c757d;">← Back</button>
+      <button type="button" id="payBtn" class="btn" style="margin-top:0.5rem;">✅ Confirm & Submit</button>
+    </div>
+
+    <div class="form-step" id="step3">
+      <div class="success-message">
+        <h3>✅ Booking Submitted!</h3>
+        <p style="margin-bottom:1.5rem; font-size:1.1rem;">We will get back to you soon.</p>
+        <a href="#" id="whatsappConfirm" class="btn" style="background:#25D366;">Chat on WhatsApp</a>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="copyright">
+      &copy; 2025 Ragash Farms. All rights reserved.
+    </div>
+  </footer>
+
+  <a href="https://wa.me/2348138570933" class="whatsapp-btn" target="_blank">💬</a>
+
+  <script src="https://js.paystack.co/v1/inline.js"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  <script type="text/javascript">
+    (function() {
+      emailjs.init("aIXXXTDh-_3JOPMWT");
+    })();
+  </script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const toggle = document.getElementById('menuToggle');
+      const mobileMenu = document.getElementById('mobileMenu');
+      const countrySelect = document.getElementById('countrySelect');
+      const phoneInput = document.getElementById('phoneInput');
+      const phoneError = document.getElementById('phoneError');
+      const step1 = document.getElementById('step1');
+      const step2 = document.getElementById('step2');
+      const step3 = document.getElementById('step3');
+      const reviewBtn = document.getElementById('reviewBtn');
+      const backBtn = document.getElementById('backBtn');
+      const payBtn = document.getElementById('payBtn');
+      const reviewContent = document.getElementById('reviewContent');
+      const whatsappConfirm = document.getElementById('whatsappConfirm');
+
+      if (toggle && mobileMenu) {
+        toggle.addEventListener('click', () => {
+          mobileMenu.classList.toggle('active');
+        });
+
+        document.addEventListener('click', (e) => {
+          if (!e.target.closest('.navbar') && !e.target.closest('.mobile-menu')) {
+            mobileMenu.classList.remove('active');
+          }
+        });
+      }
+
+      function isValidPhoneNumber(number) {
+        const cleaned = number.replace(/[\s\-\.\(\)]/g, '');
+        return /^\d{7,15}$/.test(cleaned);
+      }
+
+      reviewBtn.addEventListener('click', () => {
+        const name = document.querySelector('input[name="name"]').value;
+        const countryCode = countrySelect.value;
+        const phoneNumber = phoneInput.value.trim();
+        const product = document.querySelector('select[name="product"]').value;
+        const quantity = document.querySelector('input[name="quantity"]').value;
+        const pickupDate = document.querySelector('input[name="pickupDate"]').value;
+
+        if (!name || !countryCode || !phoneNumber || !product || !quantity || !pickupDate) {
+          alert('Please fill all fields.');
+          return;
+        }
+
+        if (!isValidPhoneNumber(phoneNumber)) {
+          phoneError.style.display = 'block';
+          return;
+        } else {
+          phoneError.style.display = 'none';
+        }
+
+        const phone = countryCode + ' ' + phoneNumber;
+        const data = { name, phone, product, quantity, pickupDate, amount: 0 };
+        localStorage.setItem('ragashOrder', JSON.stringify(data));
+
+        reviewContent.innerHTML = `
+          <p><strong>Name:</strong> ${name}</p>
+          <p><strong>Phone:</strong> ${phone}</p>
+          <p><strong>Product:</strong> ${product}</p>
+          <p><strong>Quantity:</strong> ${quantity}</p>
+          <p><strong>Pickup Date:</strong> ${pickupDate}</p>
+        `;
+
+        step1.classList.remove('active');
+        step2.classList.add('active');
+      });
+
+      backBtn.addEventListener('click', () => {
+        step2.classList.remove('active');
+        step1.classList.add('active');
+      });
+
+      payBtn.addEventListener('click', () => {
+        const order = JSON.parse(localStorage.getItem('ragashOrder'));
+
+        let amount = 0;
+        if (order.product === "Live Birds") amount = 6000 * order.quantity * 100;
+        else if (order.product === "Frozen Birds") amount = 6000 * order.quantity * 100;
+        else if (order.product === "Processed Chicken") amount = 5000 * order.quantity * 100;
+        else if (order.product === "Organic Eggs") amount = 900 * order.quantity * 100;
+        order.amount = amount;
+
+        // ✅ Update booked count in localStorage
+        let products = JSON.parse(localStorage.getItem('ragashProducts')) || {
+          "Live Birds": { enabled: true, max: 50, booked: 0 },
+          "Frozen Birds": { enabled: true, max: 30, booked: 0 },
+          "Processed Chicken": { enabled: true, max: 40, booked: 0 },
+          "Organic Eggs": { enabled: true, max: 20, booked: 0 }
+        };
+
+        if (products[order.product]) {
+          products[order.product].booked = (products[order.product].booked || 0) + parseInt(order.quantity);
+          localStorage.setItem('ragashProducts', JSON.stringify(products));
+        }
+
+        const handler = PaystackPop.setup({
+          key: 'pk_test_4b803c9ee58a19605d8a40c2932e3bd2cffa03ae',
+          email: 'ragashfarms@gmail.com',
+          amount: order.amount,
+          currency: 'NGN',
+          ref: '' + Math.floor((Math.random() * 1000000000) + 1),
+          callback: function(response) {
+            emailjs.send("service_kd50apj", "template_sdpobbf", order)
+              .finally(() => {
+                step2.classList.remove('active');
+                step3.classList.add('active');
+                const cleanPhone = order.phone.replace(/\s/g, '');
+                const waMessage = `Hello Ragash Farms,\n\nI just booked:\nProduct: ${order.product}\nQuantity: ${order.quantity}\nPhone: ${order.phone}\nPickup Date: ${order.pickupDate}\n\nPlease confirm.`;
+                whatsappConfirm.href = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(waMessage)}`;
+              });
+          },
+          onClose: function() {
+            alert('Payment was not completed. Please try again.');
+          }
+        });
+        handler.openIframe();
+      });
+    });
+  </script>
+</body>
+</html>
