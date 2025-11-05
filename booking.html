@@ -211,7 +211,11 @@
       width: 100%;
       margin-top: 0.5rem;
     }
-    .btn:hover {
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    .btn:hover:not(:disabled) {
       background: #b04a00;
       transform: translateY(-4px);
       box-shadow: 0 8px 25px rgba(211, 84, 0, 0.5);
@@ -342,6 +346,7 @@
             <option value="Processed Chicken">Processed Chicken (₦5,000/kg, min 2kg)</option>
             <option value="Organic Eggs">Organic Eggs (₦800–₦1,000/crate, max 5/day)</option>
           </select>
+          <div id="productError" style="color:#e74c3c; font-size:0.9rem; margin-top:0.5rem; display:none;"></div>
         </div>
         <div class="form-group">
           <label>Quantity</label>
@@ -398,14 +403,16 @@
       const mobileMenu = document.getElementById('mobileMenu');
       const countrySelect = document.getElementById('countrySelect');
       const phoneInput = document.getElementById('phoneInput');
+      const productSelect = document.querySelector('select[name="product"]');
+      const reviewBtn = document.getElementById('reviewBtn');
       const step1 = document.getElementById('step1');
       const step2 = document.getElementById('step2');
       const step3 = document.getElementById('step3');
-      const reviewBtn = document.getElementById('reviewBtn');
       const backBtn = document.getElementById('backBtn');
       const payBtn = document.getElementById('payBtn');
       const reviewContent = document.getElementById('reviewContent');
       const whatsappConfirm = document.getElementById('whatsappConfirm');
+      const productError = document.getElementById('productError');
 
       if (toggle && mobileMenu) {
         toggle.addEventListener('click', () => {
@@ -419,26 +426,62 @@
         });
       }
 
-      // ✅ VALIDATE PHONE NUMBER
+      // ✅ REAL-TIME PRODUCT AVAILABILITY CHECK
+      async function checkProductAvailability() {
+        const product = productSelect.value;
+        if (!product) {
+          productError.style.display = 'none';
+          reviewBtn.disabled = false;
+          return;
+        }
+
+        try {
+          const response = await fetch('https://api.github.com/gists/aa8076fceb6f54dab1f375f0f75ab39d');
+          const data = await response.json();
+          const products = JSON.parse(data.files['ragash-products.json'].content).products;
+          const prod = products[product];
+
+          if (!prod || !prod.enabled) {
+            productError.textContent = `${product} are unavailable at the moment. Call us at +234 813 857 0933.`;
+            productError.style.display = 'block';
+            reviewBtn.disabled = true;
+            return;
+          }
+
+          const available = prod.max - (prod.booked || 0);
+          if (available <= 0) {
+            productError.textContent = `${product} are sold out. Call us at +234 813 857 0933.`;
+            productError.style.display = 'block';
+            reviewBtn.disabled = true;
+            return;
+          }
+
+          productError.style.display = 'none';
+          reviewBtn.disabled = false;
+        } catch (error) {
+          console.error('Failed to check availability:', error);
+          productError.textContent = 'Could not check product status. Try again.';
+          productError.style.display = 'block';
+          reviewBtn.disabled = true;
+        }
+      }
+
+      // ✅ VALIDATE PHONE
       function isValidPhoneNumber(number) {
         const cleaned = number.replace(/[\s\-\.\(\)]/g, '');
         return /^\d{7,15}$/.test(cleaned);
       }
 
-      // ✅ LOAD PRODUCT DATA FROM PUBLIC GIST (NO TOKEN)
-      async function loadProducts() {
-        const response = await fetch('https://api.github.com/gists/aa8076fceb6f54dab1f375f0f75ab39d');
-        const data = await response.json();
-        const content = data.files['ragash-products.json'].content;
-        return JSON.parse(content).products;
-      }
+      // ✅ ATTACH REAL-TIME CHECK
+      productSelect.addEventListener('change', checkProductAvailability);
+      // Run once on load
+      checkProductAvailability();
 
-      // ✅ REVIEW BUTTON WITH AVAILABILITY CHECK
       reviewBtn.addEventListener('click', async () => {
         const name = document.querySelector('input[name="name"]').value;
         const countryCode = countrySelect.value;
         const phoneNumber = phoneInput.value.trim();
-        const product = document.querySelector('select[name="product"]').value;
+        const product = productSelect.value;
         const quantity = parseInt(document.querySelector('input[name="quantity"]').value);
         const pickupDate = document.querySelector('input[name="pickupDate"]').value;
 
@@ -452,34 +495,21 @@
           return;
         }
 
-        // ✅ CHECK PRODUCT AVAILABILITY
-        const products = await loadProducts();
-        if (!products || !products[product]) {
-          alert('Product data unavailable. Try again later.');
-          return;
-        }
-
+        // Final availability check (in case changed after last check)
+        const response = await fetch('https://api.github.com/gists/aa8076fceb6f54dab1f375f0f75ab39d');
+        const data = await response.json();
+        const products = JSON.parse(data.files['ragash-products.json'].content).products;
         const prod = products[product];
         const availableQty = prod.enabled ? (prod.max - (prod.booked || 0)) : 0;
 
-        if (!prod.enabled) {
-          alert(`❌ ${product} are currently unavailable.`);
+        if (!prod.enabled || quantity > availableQty) {
+          alert('Product availability changed. Please refresh and try again.');
           return;
         }
 
-        if (quantity > availableQty) {
-          if (availableQty <= 0) {
-            alert(`❌ ${product} are sold out.`);
-          } else {
-            alert(`❌ Only ${availableQty} ${product.toLowerCase()} available.`);
-          }
-          return;
-        }
-
-        // ✅ PROCEED IF VALID
         const phone = countryCode + ' ' + phoneNumber;
-        const data = { name, phone, product, quantity, pickupDate, amount: 0 };
-        localStorage.setItem('ragashOrder', JSON.stringify(data));
+        const dataToSend = { name, phone, product, quantity, pickupDate, amount: 0 };
+        localStorage.setItem('ragashOrder', JSON.stringify(dataToSend));
 
         reviewContent.innerHTML = `
           <p><strong>Name:</strong> ${name}</p>
