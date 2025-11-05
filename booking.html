@@ -341,13 +341,18 @@
           <label>Product</label>
           <select name="product" class="form-control" id="productSelect" required>
             <option value="">-- Select Product --</option>
-            <option value="Live Birds">Live Birds (₦6,000 per bird)</option>
-            <option value="Frozen Birds">Frozen Birds (₦6,000 per kg)</option>
-            <option value="Processed Chicken">Processed Chicken (₦5,000 per kg)</option>
-            <option value="Organic Eggs">Organic Eggs (₦900 per crate)</option>
+            <option value="Live Birds">Live Birds (Custom Price)</option>
+            <option value="Frozen Birds">Frozen Birds (₦6,000/kg)</option>
+            <option value="Processed Chicken">Processed Chicken (₦5,000/kg)</option>
+            <option value="Organic Eggs">Organic Eggs (₦900/crate)</option>
           </select>
         </div>
-        <div class="form-group">
+        <!-- ✅ LIVE BIRDS: custom price field -->
+        <div class="form-group" id="liveBirdFields" style="display:none;">
+          <label>Price per Bird (₦)</label>
+          <input type="number" id="pricePerBird" class="form-control" min="1000" placeholder="e.g., 8500" required>
+        </div>
+        <div class="form-group" id="quantityField">
           <label id="quantityLabel">Quantity</label>
           <input type="number" id="quantityInput" class="form-control" min="1" step="1" required>
         </div>
@@ -408,6 +413,9 @@
       const phoneInput = document.getElementById('phoneInput');
       const productSelect = document.getElementById('productSelect');
       const quantityInput = document.getElementById('quantityInput');
+      const pricePerBird = document.getElementById('pricePerBird');
+      const liveBirdFields = document.getElementById('liveBirdFields');
+      const quantityField = document.getElementById('quantityField');
       const reviewBtn = document.getElementById('reviewBtn');
       const productError = document.getElementById('productError');
       const totalAmountGroup = document.getElementById('totalAmountGroup');
@@ -432,31 +440,28 @@
         });
       }
 
-      // ✅ REAL-TIME: Update quantity label + total
-      function updateQuantityField() {
+      // ✅ Toggle price field for Live Birds
+      function updateFields() {
         const product = productSelect.value;
-        const label = document.getElementById('quantityLabel');
-        const input = quantityInput;
-
-        if (!product) {
-          totalAmountGroup.style.display = 'none';
-          return;
-        }
-
-        if (product === "Frozen Birds" || product === "Processed Chicken") {
-          label.textContent = "Weight (kg)";
-          input.min = "0.1";
-          input.step = "0.1";
-        } else {
-          label.textContent = "Quantity";
-          input.min = "1";
-          input.step = "1";
-        }
-
-        const quantity = parseFloat(input.value) || 0;
-        let total = 0;
         if (product === "Live Birds") {
-          total = 6000 * quantity;
+          liveBirdFields.style.display = 'block';
+          quantityField.style.display = 'block';
+        } else {
+          liveBirdFields.style.display = 'none';
+          quantityField.style.display = 'block';
+        }
+        updateTotal();
+      }
+
+      // ✅ Real-time total calculation
+      function updateTotal() {
+        const product = productSelect.value;
+        const quantity = parseFloat(quantityInput.value) || 0;
+        let total = 0;
+
+        if (product === "Live Birds") {
+          const price = parseFloat(pricePerBird.value) || 0;
+          total = price * quantity;
         } else if (product === "Frozen Birds") {
           total = 6000 * quantity;
         } else if (product === "Processed Chicken") {
@@ -469,7 +474,7 @@
         totalAmountGroup.style.display = 'block';
       }
 
-      // ✅ REAL-TIME: Check availability on product change
+      // ✅ Real-time availability check
       async function checkProductAvailability() {
         const product = productSelect.value;
         if (!product) {
@@ -512,23 +517,19 @@
 
       // ✅ Attach listeners
       productSelect.addEventListener('change', () => {
-        updateQuantityField();
+        updateFields();
         checkProductAvailability();
       });
       quantityInput.addEventListener('input', () => {
-        updateQuantityField();
+        updateTotal();
         checkProductAvailability();
       });
+      pricePerBird.addEventListener('input', updateTotal);
 
-      // Run on load
-      updateQuantityField();
+      // Init
+      updateFields();
+      updateTotal();
       checkProductAvailability();
-
-      // ✅ Phone validation
-      function isValidPhoneNumber(number) {
-        const cleaned = number.replace(/[\s\-\.\(\)]/g, '');
-        return /^\d{7,15}$/.test(cleaned);
-      }
 
       // ✅ Review button
       reviewBtn.addEventListener('click', async () => {
@@ -549,6 +550,7 @@
           return;
         }
 
+        // Final check
         const response = await fetch('https://api.github.com/gists/aa8076fceb6f54dab1f375f0f75ab39d');
         const data = await response.json();
         const products = JSON.parse(data.files['ragash-products.json'].content).products;
@@ -560,29 +562,38 @@
           return;
         }
 
+        // ✅ Get price
         let unitPrice = 0;
-        if (product === "Live Birds") unitPrice = 6000;
-        else if (product === "Frozen Birds") unitPrice = 6000;
+        if (product === "Live Birds") {
+          unitPrice = parseFloat(pricePerBird.value) || 0;
+        } else if (product === "Frozen Birds") unitPrice = 6000;
         else if (product === "Processed Chicken") unitPrice = 5000;
         else if (product === "Organic Eggs") unitPrice = 900;
 
-        const totalAmount = unitPrice * quantity;
+        const totalAmountVal = unitPrice * quantity;
         const phone = countryCode + ' ' + phoneNumber;
-        const dataToSend = { name, phone, product, quantity: quantity.toString(), pickupDate, amount: totalAmount * 100 };
+        const dataToSend = { name, phone, product, quantity: quantity.toString(), pickupDate, amount: totalAmountVal * 100 };
         localStorage.setItem('ragashOrder', JSON.stringify(dataToSend));
 
         reviewContent.innerHTML = `
           <p><strong>Name:</strong> ${name}</p>
           <p><strong>Phone:</strong> ${phone}</p>
           <p><strong>Product:</strong> ${product}</p>
-          <p><strong>Quantity/Weight:</strong> ${quantity} ${product === "Frozen Birds" || product === "Processed Chicken" ? "kg" : ""}</p>
-          <p><strong>Total Amount:</strong> ₦${totalAmount.toLocaleString()}</p>
+          <p><strong>Quantity:</strong> ${quantity}</p>
+          ${product === "Live Birds" ? `<p><strong>Price per Bird:</strong> ₦${unitPrice.toLocaleString()}</p>` : ''}
+          <p><strong>Total Amount:</strong> ₦${totalAmountVal.toLocaleString()}</p>
           <p><strong>Pickup Date:</strong> ${pickupDate}</p>
         `;
 
         step1.classList.remove('active');
         step2.classList.add('active');
       });
+
+      // Helpers
+      function isValidPhoneNumber(number) {
+        const cleaned = number.replace(/[\s\-\.\(\)]/g, '');
+        return /^\d{7,15}$/.test(cleaned);
+      }
 
       backBtn.addEventListener('click', () => {
         step2.classList.remove('active');
