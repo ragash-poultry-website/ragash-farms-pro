@@ -221,11 +221,6 @@
       font-weight: 700;
       color: var(--primary);
     }
-    .product-controls {
-      display: flex;
-      gap: 1rem;
-      align-items: center;
-    }
     .status-indicator {
       display: inline-block;
       width: 10px;
@@ -356,7 +351,15 @@
         <div id="adminContent">
           <h3 style="text-align:center; color:var(--primary); margin-bottom:1.5rem;">Manage Products</h3>
           <div id="productList"></div>
-          <button id="saveBtn" class="btn" style="margin-top:1.5rem;">💾 Save Changes</button>
+          <p style="text-align:center; margin-top:1.5rem; font-size:0.95rem; color:var(--gray);">
+            💡 To update product limits, please edit the Gist directly (you must be logged into GitHub).
+          </p>
+          <a href="https://gist.github.com/ragash-poultry-website/aa8076fceb6f54dab1f375f0f75ab39d" target="_blank" class="btn" style="background:#6c757d; margin-top:1rem;">
+            🔧 Edit Product Settings (Gist)
+          </a>
+          <a href="mailto:ragashfarms@gmail.com" class="btn" style="background:#25D366; margin-top:0.5rem;">
+            📧 View Bookings in Gmail
+          </a>
         </div>
       </div>
     </div>
@@ -397,7 +400,6 @@
       const adminLogin = document.getElementById('adminLogin');
       const adminContent = document.getElementById('adminContent');
       const productList = document.getElementById('productList');
-      const saveBtn = document.getElementById('saveBtn');
 
       if (toggle && mobileMenu) {
         toggle.addEventListener('click', () => {
@@ -411,75 +413,25 @@
         });
       }
 
-      // 🔑 YOUR GIST + TOKEN
-      const GIST_ID = 'aa8076fceb6f54dab1f375f0f75ab39d';
-      const TOKEN = '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'; // ← REPLACE THIS
-
-      let products = {};
-
+      // ✅ SAFE: Read from PUBLIC Gist (NO TOKEN)
       async function loadProducts() {
         try {
-          const response = await fetch(`https://api.github.com/gists/${GIST_ID}`, {
-            headers: { 'Authorization': `token ${TOKEN}` }
-          });
+          const response = await fetch('https://api.github.com/gists/aa8076fceb6f54dab1f375f0f75ab39d');
           const data = await response.json();
           const content = data.files['ragash-products.json'].content;
-          products = JSON.parse(content).products;
-          renderProducts();
+          const products = JSON.parse(content).products;
+          renderProducts(products);
         } catch (error) {
           console.error('Failed to load products:', error);
-          alert('❌ Could not load product data.');
+          alert('❌ Could not load product data. Please check Gist URL.');
         }
       }
 
-      async function saveProducts() {
-        const checkboxes = document.querySelectorAll('.enable-checkbox');
-        const maxInputs = document.querySelectorAll('.max-input');
-
-        checkboxes.forEach(cb => {
-          const name = cb.dataset.name;
-          products[name].enabled = cb.checked;
-        });
-
-        maxInputs.forEach(input => {
-          const name = input.dataset.name;
-          products[name].max = parseInt(input.value) || 0;
-          if (products[name].booked > products[name].max) {
-            products[name].booked = products[name].max;
-          }
-        });
-
-        const gistData = {
-          files: {
-            'ragash-products.json': {
-              content: JSON.stringify({ products }, null, 2)
-            }
-          }
-        };
-
-        try {
-          await fetch(`https://api.github.com/gists/${GIST_ID}`, {
-            method: 'PATCH',
-            headers: {
-              'Authorization': `token ${TOKEN}`,
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(gistData)
-          });
-          alert('✅ Product settings saved online!');
-          renderProducts();
-        } catch (error) {
-          console.error('Failed to save:', error);
-          alert('❌ Failed to save. Check token permissions.');
-        }
-      }
-
-      function renderProducts() {
+      function renderProducts(products) {
         productList.innerHTML = '';
         for (const [name, data] of Object.entries(products)) {
           const booked = data.booked || 0;
           const available = data.enabled && booked < data.max;
-          
           const item = document.createElement('div');
           item.className = 'product-item';
           item.innerHTML = `
@@ -491,13 +443,6 @@
                   <span class="status-indicator ${available ? 'available' : ''}"></span>
                   ${available ? 'Available' : 'Unavailable'}
                 </div>
-              </div>
-              <div class="product-controls">
-                <label style="display:flex;align-items:center;gap:0.5rem;">
-                  <input type="checkbox" ${data.enabled ? 'checked' : ''} data-name="${name}" class="enable-checkbox">
-                  Enable
-                </label>
-                <input type="number" min="0" value="${data.max}" data-name="${name}" class="max-input" style="width:80px; padding:0.4rem; border:1px solid #ddd; border-radius:4px;">
               </div>
             </div>
           `;
@@ -515,8 +460,6 @@
           alert('❌ Incorrect password.');
         }
       });
-
-      saveBtn.addEventListener('click', saveProducts);
     });
   </script>
 </body>
