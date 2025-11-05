@@ -339,18 +339,20 @@
         </div>
         <div class="form-group">
           <label>Product</label>
-          <select name="product" class="form-control" required>
+          <select name="product" class="form-control" id="productSelect" required>
             <option value="">-- Select Product --</option>
-            <option value="Live Birds">Live Birds (₦6,000 – ₦30,000)</option>
-            <option value="Frozen Birds">Frozen Birds (₦6,000/kg, min 2kg)</option>
-            <option value="Processed Chicken">Processed Chicken (₦5,000/kg, min 2kg)</option>
-            <option value="Organic Eggs">Organic Eggs (₦800–₦1,000/crate, max 5/day)</option>
+            <option value="Live Birds">Live Birds (₦6,000 per bird)</option>
+            <option value="Frozen Birds">Frozen Birds (₦6,000 per kg)</option>
+            <option value="Processed Chicken">Processed Chicken (₦5,000 per kg)</option>
+            <option value="Organic Eggs">Organic Eggs (₦900 per crate)</option>
           </select>
-          <div id="productError" style="color:#e74c3c; font-size:0.9rem; margin-top:0.5rem; display:none;"></div>
         </div>
         <div class="form-group">
-          <label>Quantity</label>
-          <input type="number" name="quantity" class="form-control" min="1" required>
+          <label id="quantityLabel">Quantity</label>
+          <input type="number" id="quantityInput" class="form-control" min="1" step="1" required>
+        </div>
+        <div class="form-group" id="totalAmountGroup" style="display:none;">
+          <strong>Your total amount is: <span id="totalAmount">₦0</span></strong>
         </div>
         <div class="form-group">
           <label>Preferred Pickup Date</label>
@@ -362,6 +364,7 @@
           Bring your own crates/coolers.
         </div>
         <button type="button" id="reviewBtn" class="btn">Review Booking</button>
+        <div id="productError" style="color:#e74c3c; font-size:0.9rem; margin-top:0.5rem; display:none;"></div>
       </form>
     </div>
 
@@ -403,8 +406,12 @@
       const mobileMenu = document.getElementById('mobileMenu');
       const countrySelect = document.getElementById('countrySelect');
       const phoneInput = document.getElementById('phoneInput');
-      const productSelect = document.querySelector('select[name="product"]');
+      const productSelect = document.getElementById('productSelect');
+      const quantityInput = document.getElementById('quantityInput');
       const reviewBtn = document.getElementById('reviewBtn');
+      const productError = document.getElementById('productError');
+      const totalAmountGroup = document.getElementById('totalAmountGroup');
+      const totalAmount = document.getElementById('totalAmount');
       const step1 = document.getElementById('step1');
       const step2 = document.getElementById('step2');
       const step3 = document.getElementById('step3');
@@ -412,7 +419,6 @@
       const payBtn = document.getElementById('payBtn');
       const reviewContent = document.getElementById('reviewContent');
       const whatsappConfirm = document.getElementById('whatsappConfirm');
-      const productError = document.getElementById('productError');
 
       if (toggle && mobileMenu) {
         toggle.addEventListener('click', () => {
@@ -426,7 +432,44 @@
         });
       }
 
-      // ✅ REAL-TIME PRODUCT AVAILABILITY CHECK
+      // ✅ REAL-TIME: Update quantity label + total
+      function updateQuantityField() {
+        const product = productSelect.value;
+        const label = document.getElementById('quantityLabel');
+        const input = quantityInput;
+
+        if (!product) {
+          totalAmountGroup.style.display = 'none';
+          return;
+        }
+
+        if (product === "Frozen Birds" || product === "Processed Chicken") {
+          label.textContent = "Weight (kg)";
+          input.min = "0.1";
+          input.step = "0.1";
+        } else {
+          label.textContent = "Quantity";
+          input.min = "1";
+          input.step = "1";
+        }
+
+        const quantity = parseFloat(input.value) || 0;
+        let total = 0;
+        if (product === "Live Birds") {
+          total = 6000 * quantity;
+        } else if (product === "Frozen Birds") {
+          total = 6000 * quantity;
+        } else if (product === "Processed Chicken") {
+          total = 5000 * quantity;
+        } else if (product === "Organic Eggs") {
+          total = 900 * quantity;
+        }
+
+        totalAmount.textContent = `₦${total.toLocaleString()}`;
+        totalAmountGroup.style.display = 'block';
+      }
+
+      // ✅ REAL-TIME: Check availability on product change
       async function checkProductAvailability() {
         const product = productSelect.value;
         if (!product) {
@@ -449,8 +492,9 @@
           }
 
           const available = prod.max - (prod.booked || 0);
-          if (available <= 0) {
-            productError.textContent = `${product} are sold out. Call us at +234 813 857 0933.`;
+          const quantity = parseFloat(quantityInput.value) || 0;
+          if (quantity > available) {
+            productError.textContent = `${product} are sold out or insufficient. Call us at +234 813 857 0933.`;
             productError.style.display = 'block';
             reviewBtn.disabled = true;
             return;
@@ -466,23 +510,33 @@
         }
       }
 
-      // ✅ VALIDATE PHONE
+      // ✅ Attach listeners
+      productSelect.addEventListener('change', () => {
+        updateQuantityField();
+        checkProductAvailability();
+      });
+      quantityInput.addEventListener('input', () => {
+        updateQuantityField();
+        checkProductAvailability();
+      });
+
+      // Run on load
+      updateQuantityField();
+      checkProductAvailability();
+
+      // ✅ Phone validation
       function isValidPhoneNumber(number) {
         const cleaned = number.replace(/[\s\-\.\(\)]/g, '');
         return /^\d{7,15}$/.test(cleaned);
       }
 
-      // ✅ ATTACH REAL-TIME CHECK
-      productSelect.addEventListener('change', checkProductAvailability);
-      // Run once on load
-      checkProductAvailability();
-
+      // ✅ Review button
       reviewBtn.addEventListener('click', async () => {
         const name = document.querySelector('input[name="name"]').value;
         const countryCode = countrySelect.value;
         const phoneNumber = phoneInput.value.trim();
         const product = productSelect.value;
-        const quantity = parseInt(document.querySelector('input[name="quantity"]').value);
+        const quantity = parseFloat(quantityInput.value);
         const pickupDate = document.querySelector('input[name="pickupDate"]').value;
 
         if (!name || !countryCode || !phoneNumber || !product || !quantity || !pickupDate) {
@@ -495,7 +549,6 @@
           return;
         }
 
-        // Final availability check (in case changed after last check)
         const response = await fetch('https://api.github.com/gists/aa8076fceb6f54dab1f375f0f75ab39d');
         const data = await response.json();
         const products = JSON.parse(data.files['ragash-products.json'].content).products;
@@ -507,15 +560,23 @@
           return;
         }
 
+        let unitPrice = 0;
+        if (product === "Live Birds") unitPrice = 6000;
+        else if (product === "Frozen Birds") unitPrice = 6000;
+        else if (product === "Processed Chicken") unitPrice = 5000;
+        else if (product === "Organic Eggs") unitPrice = 900;
+
+        const totalAmount = unitPrice * quantity;
         const phone = countryCode + ' ' + phoneNumber;
-        const dataToSend = { name, phone, product, quantity, pickupDate, amount: 0 };
+        const dataToSend = { name, phone, product, quantity: quantity.toString(), pickupDate, amount: totalAmount * 100 };
         localStorage.setItem('ragashOrder', JSON.stringify(dataToSend));
 
         reviewContent.innerHTML = `
           <p><strong>Name:</strong> ${name}</p>
           <p><strong>Phone:</strong> ${phone}</p>
           <p><strong>Product:</strong> ${product}</p>
-          <p><strong>Quantity:</strong> ${quantity}</p>
+          <p><strong>Quantity/Weight:</strong> ${quantity} ${product === "Frozen Birds" || product === "Processed Chicken" ? "kg" : ""}</p>
+          <p><strong>Total Amount:</strong> ₦${totalAmount.toLocaleString()}</p>
           <p><strong>Pickup Date:</strong> ${pickupDate}</p>
         `;
 
@@ -530,14 +591,6 @@
 
       payBtn.addEventListener('click', () => {
         const order = JSON.parse(localStorage.getItem('ragashOrder'));
-
-        let amount = 0;
-        if (order.product === "Live Birds") amount = 6000 * order.quantity * 100;
-        else if (order.product === "Frozen Birds") amount = 6000 * order.quantity * 100;
-        else if (order.product === "Processed Chicken") amount = 5000 * order.quantity * 100;
-        else if (order.product === "Organic Eggs") amount = 900 * order.quantity * 100;
-        order.amount = amount;
-
         const handler = PaystackPop.setup({
           key: 'pk_test_4b803c9ee58a19605d8a40c2932e3bd2cffa03ae',
           email: 'ragashfarms@gmail.com',
@@ -550,7 +603,7 @@
                 step2.classList.remove('active');
                 step3.classList.add('active');
                 const cleanPhone = order.phone.replace(/\s/g, '');
-                const waMessage = `Hello Ragash Farms,\n\nI just booked:\nProduct: ${order.product}\nQuantity: ${order.quantity}\nPhone: ${order.phone}\nPickup Date: ${order.pickupDate}\n\nPlease confirm.`;
+                const waMessage = `Hello Ragash Farms,\n\nI just booked:\nProduct: ${order.product}\nQuantity: ${order.quantity}\nTotal: ₦${(order.amount/100).toLocaleString()}\nPhone: ${order.phone}\nPickup Date: ${order.pickupDate}\n\nPlease confirm.`;
                 whatsappConfirm.href = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(waMessage)}`;
               });
           },
